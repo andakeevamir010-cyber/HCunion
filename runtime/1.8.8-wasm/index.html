@@ -42,6 +42,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-f
 
 .hc-grid{align-items:start}.hc-setting{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0 7px;border-bottom:1px solid #28213f}.hc-setting strong{display:block;font-size:13px}.hc-setting small{display:block;color:#aaa0d1;font-size:11px;margin-top:2px}.hc-pill{margin-left:auto;padding:5px 10px;border:1px solid #7134d6;border-radius:20px;color:#c8a8ff;font-size:10px;letter-spacing:1px}.hc-range{width:100%;accent-color:#8e42ff;margin:13px 0 0}.hc-range-labels{display:flex;justify-content:space-between;color:#aaa0d1;font-size:11px}.hc-setting output{border:1px solid #55418b;border-radius:6px;padding:5px 10px;color:#d5c5ff;font-size:13px;min-width:68px;text-align:center}.hc-action,.hc-select{border:1px solid #873cff;border-radius:7px;background:#241044;color:#eee5ff;padding:8px 14px;font:inherit;cursor:pointer}.hc-action.running{background:#6623c8}.hc-beat{height:72px;margin-top:13px;border:1px solid #352254;border-radius:8px;background:#0b0b19;display:flex;align-items:center;justify-content:center;gap:12px;color:#a99bcf;font-size:11px;letter-spacing:2px}.hc-beat span{width:15px;height:15px;border-radius:50%;background:#543b7b;box-shadow:0 0 0 5px #543b7b22}.hc-beat.pulse span{background:#c28aff;box-shadow:0 0 22px #a34cff,0 0 0 8px #8c3bff30}.hc-disclaimer{display:block;color:#8e85b2;font-size:10px;line-height:1.45;margin-top:10px}.hc-select{max-width:145px;padding:7px 9px;font-size:12px}
 @media(max-width:850px){.hc-setting{gap:8px}}
+
+.hc-cosmetics[hidden]{display:none}.hc-cosmetic-intro{display:flex;flex-direction:column;gap:4px;margin:0 0 14px;color:#eeeaff}.hc-cosmetic-intro span{font-size:12px;color:#aaa0d1;line-height:1.5}.hc-cosmetic-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:13px}.hc-cosmetic-card{min-width:0;padding:13px;border:1px solid #5521a5;border-radius:10px;background:linear-gradient(145deg,rgba(17,14,37,.94),rgba(9,9,23,.96))}.hc-cosmetic-art{height:76px;border:1px solid #38245c;border-radius:8px;background:radial-gradient(circle,#44206e,#100d20 70%);display:grid;place-items:center;color:#c99aff;font-size:38px;text-shadow:0 0 20px #a34cff}.wing-art{color:#9bd5ff}.hat-art{color:#f0c8ff}.aura-art{color:#d8a6ff}.trail-art{color:#90dfff}.pet-art{color:#9dffcf}.emote-art{color:#ffe29a}.name-art{color:#e5a5ff}.hc-cosmetic-card h2{font-size:15px;margin:10px 0 3px}.hc-cosmetic-card p{min-height:34px;font-size:11px;color:#aaa0d1;margin:0 0 10px}.hc-cosmetic-actions{display:flex;gap:6px}.hc-cosmetic-actions select{min-width:0;flex:1;background:#111020;border:1px solid #514078;border-radius:6px;color:#e8ddff;padding:7px 5px;font-size:10px}.hc-equip{border:1px solid #873cff;border-radius:6px;background:#5120a3;color:white;padding:6px 8px;font-size:11px;cursor:pointer}.hc-equip.selected{background:#241044;color:#d9bdff;border-color:#b58aff}.hc-cosmetic-status{margin-top:13px;padding:10px 12px;border:1px solid #352254;border-radius:7px;color:#bda9e8;font-size:12px}
+@media(max-width:1100px){.hc-cosmetic-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}}@media(max-width:560px){.hc-cosmetic-grid{grid-template-columns:1fr}}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
@@ -102,7 +105,21 @@ window.addEventListener("load",function(){
         <div class="hc-setting"><div><strong>Style</strong><small>Cosmetic display setting.</small></div><select class="hc-select"><option>Classic</option><option>Dot</option><option>Plus</option></select></div>
       </article>
     </section>
-    <div class="hc-note">Press RIGHT SHIFT to close this menu. These tools are visual and practice-only; no combat automation or gameplay macros.</div>
+    <section id="hc-cosmetics" class="hc-cosmetics" hidden>
+      <div class="hc-cosmetic-intro"><strong>Cosmetic collection</strong><span>Choose styles for your HCunion look. These are menu previews; in-world rendering and visibility to other players are not connected yet.</span></div>
+      <div class="hc-cosmetic-grid">
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art cape-art">♛</div><h2>Capes</h2><p>Royal, Shadow, Nebula, and Classic styles.</p><div class="hc-cosmetic-actions"><select aria-label="Cape style"><option>Royal Purple</option><option>Shadow</option><option>Nebula</option><option>Classic</option></select><button class="hc-equip" data-cosmetic="Cape">Preview</button></div></article>
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art wing-art">✧</div><h2>Wings</h2><p>Angel, Void, Crystal, and Ember designs.</p><div class="hc-cosmetic-actions"><select aria-label="Wing style"><option>Void Wings</option><option>Angel Wings</option><option>Crystal Wings</option><option>Ember Wings</option></select><button class="hc-equip" data-cosmetic="Wings">Preview</button></div></article>
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art hat-art">♜</div><h2>Hats</h2><p>Crowns, halos, wizard hats, and beanies.</p><div class="hc-cosmetic-actions"><select aria-label="Hat style"><option>Amethyst Crown</option><option>Halo</option><option>Wizard Hat</option><option>Beanie</option></select><button class="hc-equip" data-cosmetic="Hat">Preview</button></div></article>
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art aura-art">✺</div><h2>Auras</h2><p>Soft glow effects in different colors.</p><div class="hc-cosmetic-actions"><select aria-label="Aura style"><option>Purple Glow</option><option>Blue Frost</option><option>Rose Spark</option><option>Golden Light</option></select><button class="hc-equip" data-cosmetic="Aura">Preview</button></div></article>
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art trail-art">〰</div><h2>Trails</h2><p>Star dust, pixel sparks, and comet trails.</p><div class="hc-cosmetic-actions"><select aria-label="Trail style"><option>Stardust</option><option>Pixel Sparks</option><option>Comet</option><option>Violet Mist</option></select><button class="hc-equip" data-cosmetic="Trail">Preview</button></div></article>
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art pet-art">◆</div><h2>Shoulder Pets</h2><p>Mini dragon, parrot, phantom, and slime.</p><div class="hc-cosmetic-actions"><select aria-label="Pet style"><option>Mini Dragon</option><option>Parrot</option><option>Phantom</option><option>Slime</option></select><button class="hc-equip" data-cosmetic="Pet">Preview</button></div></article>
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art emote-art">★</div><h2>Emotes</h2><p>Wave, cheer, point, and victory poses.</p><div class="hc-cosmetic-actions"><select aria-label="Emote style"><option>Wave</option><option>Cheer</option><option>Point</option><option>Victory</option></select><button class="hc-equip" data-cosmetic="Emote">Preview</button></div></article>
+        <article class="hc-cosmetic-card"><div class="hc-cosmetic-art name-art">✦</div><h2>Name Effects</h2><p>Gradient, glow, and sparkle name styles.</p><div class="hc-cosmetic-actions"><select aria-label="Name effect"><option>Violet Glow</option><option>Blue Gradient</option><option>Rose Sparkle</option><option>Gold Shine</option></select><button class="hc-equip" data-cosmetic="Name effect">Preview</button></div></article>
+      </div>
+      <div class="hc-cosmetic-status" id="hc-cosmetic-status" role="status">No cosmetic preview selected.</div>
+    </section>
+    <div class="hc-note" id="hc-mod-note">Press RIGHT SHIFT to close this menu. These tools are visual and practice-only; no combat automation or gameplay macros.</div>
   </main>
 </div>
 <script>
@@ -122,14 +139,24 @@ window.addEventListener("load",function(){
   tempo.addEventListener("input",function(){tempoValue.textContent=tempo.value+" BPS";if(timer){clearInterval(timer);startBeat();}});
   function startBeat(){var delay=1000/Number(tempo.value);timer=setInterval(function(){beat.classList.add("pulse");beat.querySelector("b").textContent="BEAT";setTimeout(function(){beat.classList.remove("pulse");beat.querySelector("b").textContent="PRACTICE";},120);},delay);}
   trainerButton.addEventListener("click",function(){if(timer){clearInterval(timer);timer=null;trainerButton.textContent="Start";trainerButton.classList.remove("running");trainerStatus.textContent="Paused.";beat.classList.remove("pulse");beat.querySelector("b").textContent="PAUSED";}else{trainerButton.textContent="Pause";trainerButton.classList.add("running");trainerStatus.textContent="Follow the visual beat.";beat.querySelector("b").textContent="PRACTICE";startBeat();}});
+  document.querySelectorAll(".hc-equip").forEach(function(button){
+    button.addEventListener("click",function(){
+      document.querySelectorAll(".hc-equip").forEach(function(other){other.classList.remove("selected");other.textContent="Preview";});
+      button.classList.add("selected");button.textContent="Selected";
+      var card=button.closest(".hc-cosmetic-card"),kind=button.getAttribute("data-cosmetic"),choice=card.querySelector("select").value;
+      document.getElementById("hc-cosmetic-status").textContent=kind+": "+choice+" selected for menu preview. In-game display and visibility to other players are not implemented yet.";
+    });
+  });
   document.querySelectorAll(".hc-nav button").forEach(function(button){
     button.addEventListener("click",function(){
       document.querySelectorAll(".hc-nav button").forEach(function(b){b.classList.remove("active");});
       button.classList.add("active");
       var tab=button.getAttribute("data-tab");
       document.getElementById("hc-title").textContent=tab;
-      document.getElementById("hc-subtitle").textContent=tab==="Mods"?"Your client interface options.":tab+" options are coming soon.";
+      document.getElementById("hc-subtitle").textContent=tab==="Mods"?"Your client interface options.":tab==="Cosmetics"?"Browse capes, wings, hats, auras, and more.":tab+" options are coming soon.";
       document.getElementById("hc-grid").style.display=tab==="Mods"?"grid":"none";
+      document.getElementById("hc-cosmetics").hidden=tab!=="Cosmetics";
+      document.getElementById("hc-mod-note").style.display=tab==="Mods"?"block":"none";
     });
   });
 })();
