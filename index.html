@@ -13,7 +13,6 @@
       <a class="brand" href="./"><span class="brand-mark">HC</span><span>HCunion <small>CLIENT</small></span></a>
       <div class="version">MINECRAFT 1.8.8 <span>•</span> WASM-GC TARGET</div>
     </header>
-
     <main>
       <section class="hero">
         <div class="eyebrow">PRIVATE BUILD • 1.8.8 ONLY</div>
@@ -21,14 +20,12 @@
         <p class="muted">A lightweight HCunion client shell. The actual Minecraft runtime still needs to be added from a source you have permission to use.</p>
         <div class="runtime" id="runtimeStatus"><span class="status-dot"></span><span>Game runtime not installed yet</span></div>
       </section>
-
       <section class="workspace">
         <aside class="sidebar">
           <button class="nav-item active" data-page="modules">Modules</button>
           <button class="nav-item" data-page="macros">Macros</button>
           <button class="nav-item" data-page="settings">Settings</button>
         </aside>
-
         <section class="panel" id="modulesPage">
           <div class="panel-heading"><div><div class="eyebrow">CLIENT CONFIG</div><h2>Modules</h2></div><span class="pill">1.8.8</span></div>
           <div class="module-list">
@@ -43,21 +40,26 @@
               <div class="module-extra"><label for="cpsValue">Target CPS setting</label><div class="range-row"><input id="cpsValue" type="range" min="1" max="20" value="10"><strong id="cpsLabel">10 CPS</strong></div></div>
             </article>
             <article class="module">
-              <div class="module-copy"><h3>Auto Rod</h3><p>Manual combo reminder for your rod → sword sequence.</p></div>
+              <div class="module-copy"><h3>Auto Rod</h3><p>Manual rod → sword combo practice guide. It never swaps slots or attacks for you.</p></div>
               <label class="switch"><input id="rodEnabled" type="checkbox"><span></span></label>
               <div class="module-extra"><label for="rodCombo">Combo reminder</label><input id="rodCombo" class="text-field" value="Rod → Sword" maxlength="40"></div>
+              <div class="combo-guide">
+                <div class="combo-top"><div><strong>Rod Combo Practice</strong><p class="hint">Tap each step after you do it yourself in-game.</p></div><span id="comboCount" class="pill">Step 1 of 3</span></div>
+                <div class="combo-track"><div id="comboProgress" class="combo-progress"></div></div>
+                <div id="comboStep" class="combo-step">① Use your fishing rod</div>
+                <div class="combo-actions"><button id="comboNext" class="primary-button" type="button">Mark step complete</button><button id="comboReset" class="secondary-button" type="button">Reset combo</button></div>
+                <p id="comboStatus" class="hint" aria-live="polite">Practice guide only — no game inputs are sent.</p>
+              </div>
             </article>
           </div>
           <div class="save-row"><span id="saveStatus" class="hint">Changes save in this browser.</span><button id="resetButton" class="secondary-button" type="button">Reset settings</button></div>
         </section>
-
         <section class="panel hidden" id="macrosPage">
           <div class="panel-heading"><div><div class="eyebrow">QUICK TOOLS</div><h2>Custom macros</h2></div></div>
           <p class="muted">Save non-combat text shortcuts, such as a server message. These are copied to your clipboard; they do not send messages or automate gameplay.</p>
           <div class="macro-editor"><label for="macroName">Shortcut name</label><input id="macroName" class="text-field" placeholder="Example: hello"><label for="macroText">Message</label><textarea id="macroText" class="text-field" rows="3" placeholder="Type a message to save..."></textarea><button id="addMacro" class="primary-button" type="button">Save shortcut</button></div>
           <div id="macroList" class="macro-list"></div>
         </section>
-
         <section class="panel hidden" id="settingsPage">
           <div class="panel-heading"><div><div class="eyebrow">PREFERENCES</div><h2>Settings</h2></div></div>
           <div class="setting-row"><div><h3>Client version</h3><p class="muted">Minecraft Java 1.8.8 only</p></div><span class="pill">1.8.8</span></div>
