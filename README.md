@@ -4,12 +4,14 @@ A browser-hosted client project targeting **Minecraft Java 1.8.8 only**.
 
 ## Current project status
 
-The repository currently contains the client settings interface:
+The repository contains the HCunion settings interface and a runtime launch page:
 - `index.html` — client interface
 - `style.css` — dark HCunion theme
 - `app.js` — local settings and shortcut storage
+- `runtime/1.8.8-wasm/index.html` — HCunion launch wrapper for the 1.8.8 WASM-GC client
+- `runtime/1.8.8-wasm/bootstrap.js` — upstream bootstrap loader
 
-**The playable Minecraft runtime is not included yet.** The interface is not a working Minecraft client until a compatible 1.8.8 WebAssembly-GC runtime and its required assets are integrated from a source whose license permits the intended use.
+**Runtime integration is in progress.** The launch page loads the WASM-GC bootstrap locally and fetches the large EPW game asset from the upstream Minecraft-Launcher repository. The upstream owner has reportedly granted permission to use the project files. The launch flow still needs browser testing before it can be called fully working.
 
 ## Requested feature scope
 
