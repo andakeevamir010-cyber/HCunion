@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131d">
+  <title>HCunion Client — 1.8.8</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./"><span class="brand-mark">HC</span><span>HCunion <small>CLIENT</small></span></a>
+      <div class="version">MINECRAFT 1.8.8 <span>•</span> WASM-GC TARGET</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">PRIVATE BUILD • 1.8.8 ONLY</div>
+        <h1>Play your way.</h1>
+        <p class="muted">A lightweight HCunion client shell. The actual Minecraft runtime still needs to be added from a source you have permission to use.</p>
+        <div class="runtime" id="runtimeStatus"><span class="status-dot"></span><span>Game runtime not installed yet</span></div>
+      </section>
+
+      <section class="workspace">
+        <aside class="sidebar">
+          <button class="nav-item active" data-page="modules">Modules</button>
+          <button class="nav-item" data-page="macros">Macros</button>
+          <button class="nav-item" data-page="settings">Settings</button>
+        </aside>
+
+        <section class="panel" id="modulesPage">
+          <div class="panel-heading"><div><div class="eyebrow">CLIENT CONFIG</div><h2>Modules</h2></div><span class="pill">1.8.8</span></div>
+          <div class="module-list">
+            <article class="module">
+              <div class="module-copy"><h3>Aim Assist</h3><p>Keybind and target-info preference. This build does not move the aim or automate targeting.</p></div>
+              <label class="switch"><input id="aimEnabled" type="checkbox"><span></span></label>
+              <div class="module-extra"><label for="aimKey">Activation key</label><button id="aimKey" class="key-button" type="button">I</button><span class="hint">Click, then press a key</span></div>
+            </article>
+            <article class="module">
+              <div class="module-copy"><h3>Auto Clicker</h3><p>Practice CPS setting and counter only; no automatic clicks.</p></div>
+              <label class="switch"><input id="cpsEnabled" type="checkbox"><span></span></label>
+              <div class="module-extra"><label for="cpsValue">Target CPS setting</label><div class="range-row"><input id="cpsValue" type="range" min="1" max="20" value="10"><strong id="cpsLabel">10 CPS</strong></div></div>
+            </article>
+            <article class="module">
+              <div class="module-copy"><h3>Auto Rod</h3><p>Manual combo reminder for your rod → sword sequence.</p></div>
+              <label class="switch"><input id="rodEnabled" type="checkbox"><span></span></label>
+              <div class="module-extra"><label for="rodCombo">Combo reminder</label><input id="rodCombo" class="text-field" value="Rod → Sword" maxlength="40"></div>
+            </article>
+          </div>
+          <div class="save-row"><span id="saveStatus" class="hint">Changes save in this browser.</span><button id="resetButton" class="secondary-button" type="button">Reset settings</button></div>
+        </section>
+
+        <section class="panel hidden" id="macrosPage">
+          <div class="panel-heading"><div><div class="eyebrow">QUICK TOOLS</div><h2>Custom macros</h2></div></div>
+          <p class="muted">Save non-combat text shortcuts, such as a server message. These are copied to your clipboard; they do not send messages or automate gameplay.</p>
+          <div class="macro-editor"><label for="macroName">Shortcut name</label><input id="macroName" class="text-field" placeholder="Example: hello"><label for="macroText">Message</label><textarea id="macroText" class="text-field" rows="3" placeholder="Type a message to save..."></textarea><button id="addMacro" class="primary-button" type="button">Save shortcut</button></div>
+          <div id="macroList" class="macro-list"></div>
+        </section>
+
+        <section class="panel hidden" id="settingsPage">
+          <div class="panel-heading"><div><div class="eyebrow">PREFERENCES</div><h2>Settings</h2></div></div>
+          <div class="setting-row"><div><h3>Client version</h3><p class="muted">Minecraft Java 1.8.8 only</p></div><span class="pill">1.8.8</span></div>
+          <div class="setting-row"><div><h3>Rendering target</h3><p class="muted">WebAssembly GC (runtime not bundled)</p></div><span class="pill">WASM-GC</span></div>
+          <div class="setting-row"><div><h3>Configuration</h3><p class="muted">Preferences are stored locally in this browser.</p></div></div>
+        </section>
+      </section>
+    </main>
+    <footer>HCunion Client • Community project • Not affiliated with Mojang or Microsoft</footer>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
