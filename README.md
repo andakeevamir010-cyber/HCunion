@@ -18,6 +18,7 @@ The repository is **not yet a finished playable client**. The settings page is i
 1. **Aim Assist** — display-only configuration preview. It does not lock onto players or move the player's aim.
 2. **Auto Clicker** — practice CPS preference only; it does not generate gameplay clicks.
 3. **Auto Rod** — manual rod-to-sword practice guide; it does not switch slots or send game inputs.
+4. **Bow Agro Trainer** — visual metronome with a 1–6 beats/second tempo setting, start/stop controls, and locally saved tempo. It does not aim, draw, release, swap items, or attack.
 
 The Macro feature has been removed from the interface and settings storage. No unrelated HUD modules are included.
 
