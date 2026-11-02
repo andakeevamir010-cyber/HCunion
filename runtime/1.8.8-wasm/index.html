@@ -110,7 +110,7 @@ window.addEventListener("load",function(){
         <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Aim Assist demo setting"></button></div>
         <div class="hc-row"><div><strong>Range</strong><span>Example setting · 1–20 blocks</span></div><output>8.0</output></div>
         <input class="hc-range" type="range" min="1" max="20" value="8">
-        <div class="hc-row"><div><strong>Lock Keybind</strong><span>Example keybind</span></div><span><kbd data-bind="aim">I</kbd> <button type="button" class="hc-bind-edit" data-bind-edit="aim">Change</button></span></div>
+        <div class="hc-row"><div><strong>Lock Keybind</strong><span>Example keybind</span></div><span><kbd data-bind="aim" data-keycode="KeyI">I</kbd> <button type="button" class="hc-bind-edit" data-bind-edit="aim">Change</button></span></div>
         <div id="hc-aim-preview-status" class="hc-cosmetic-status" role="status">PREVIEW OFF — press I to toggle this UI preview.</div>
         <div class="hc-row"><div><strong>Lock Mode</strong><span>Example setting</span></div><select class="hc-select"><option>Single Target (Hold)</option></select></div>
         <div class="hc-row"><div><strong>Smoothness</strong><span>Example setting · 1–20</span></div><output>5</output></div>
@@ -192,7 +192,7 @@ window.addEventListener("load",function(){
       if((e.code==="KeyT"||e.code==="Slash")&&!e.ctrlKey&&!e.metaKey&&!e.altKey)chatOpen=true;
       else if(chatOpen&&(e.code==="Enter"||e.code==="NumpadEnter"||e.code==="Escape"))chatOpen=false;
     }
-    if(e.code==="KeyI"&&!menu.classList.contains("open")&&!typing&&!chatOpen&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+    if(e.code===(document.querySelector('[data-bind="aim"]')||{}).getAttribute("data-keycode")&&!menu.classList.contains("open")&&!typing&&!chatOpen&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!bindingCapture){
       e.preventDefault();
       var aimCard=Array.from(document.querySelectorAll(".hc-combat-demo")).find(function(item){return item.querySelector("h2")&&item.querySelector("h2").textContent==="Aim Assist";});
       var aimSwitch=aimCard&&aimCard.querySelector(".hc-switch");
@@ -231,7 +231,7 @@ window.addEventListener("load",function(){
     if(!/^Key[A-Z]$|^Digit[0-9]$|^F([1-9]|1[0-2])$|^Space$|^Tab$|^CapsLock$|^Insert$|^Delete$|^Home$|^End$|^PageUp$|^PageDown$|^Arrow(Up|Down|Left|Right)$/.test(e.code))return;
     e.preventDefault();e.stopImmediatePropagation();
     var code=e.code,label=e.key.length===1?e.key.toUpperCase():e.key;
-    document.querySelector('[data-bind="'+bindingCapture.name+'"]').textContent=label;
+    var display=document.querySelector('[data-bind="'+bindingCapture.name+'"]');display.textContent=label;display.setAttribute("data-keycode",code);
     bindingCapture.button.classList.remove("waiting");bindingCapture.button.textContent="Change";bindingCapture=null;
   },true);
   var swordSlot=document.getElementById("hc-sword-slot");
