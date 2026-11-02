@@ -3,36 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#080b12">
+<meta name="theme-color" content="#080512">
 <title>HCunion — Minecraft 1.8.8</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Inter,Segoe UI,Arial,sans-serif}
 #game_frame{position:fixed;inset:0;background:#000}
+#hc-menu{position:fixed;inset:0;z-index:2147483000;display:none;color:#eeeaff;background:radial-gradient(ellipse at 78% 15%,rgba(95,31,190,.22),transparent 42%),linear-gradient(115deg,rgba(5,6,17,.97),rgba(10,7,27,.94));backdrop-filter:blur(12px)}
+#hc-menu.open{display:flex}
+.hc-sidebar{width:220px;flex:none;border-right:1px solid #39216d;background:rgba(7,7,19,.86);padding:24px 14px;display:flex;flex-direction:column}
+.hc-brand{text-align:center;color:#b68aff;font-size:28px;font-weight:900;letter-spacing:5px;margin:4px 0 42px;text-shadow:0 0 22px #7c2cff}
+.hc-brand small{display:block;font-size:10px;letter-spacing:8px;margin-top:5px}
+.hc-nav{display:grid;gap:10px}
+.hc-nav button{border:1px solid transparent;background:transparent;color:#bcb1e8;padding:14px 15px;border-radius:9px;text-align:left;font-size:15px;cursor:pointer}
+.hc-nav button.active,.hc-nav button:hover{background:linear-gradient(90deg,rgba(104,24,225,.45),rgba(64,26,126,.2));border-color:#792dff;color:#fff}
+.hc-version{margin-top:auto;color:#8d83b8;font-size:12px;line-height:1.6;padding:8px}
+.hc-main{min-width:0;flex:1;padding:22px 26px 26px;overflow:auto}
+.hc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.hc-top h1{font-size:30px;margin:0 0 3px;letter-spacing:-.5px}
+.hc-top p{margin:0;color:#aaa0d8;font-size:14px}
+.hc-close{border:0;background:transparent;color:#c7aaff;font-size:30px;line-height:1;cursor:pointer;padding:0 4px}
+.hc-grid{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:16px}
+.hc-card{border:1px solid #5521a5;border-radius:11px;background:linear-gradient(145deg,rgba(17,14,37,.94),rgba(9,9,23,.96));padding:17px 19px;box-shadow:0 0 22px rgba(91,28,190,.09)}
+.hc-card-head{display:flex;align-items:center;gap:14px;padding-bottom:13px;border-bottom:1px solid #28213f}
+.hc-symbol{width:48px;text-align:center;color:#a96bff;font-size:31px}
+.hc-card h2{font-size:20px;margin:0 0 3px}
+.hc-card p{font-size:12px;color:#a9a0d1;margin:0}
+.hc-switch{margin-left:auto;position:relative;width:62px;height:32px;border:1px solid #6c32d4;border-radius:30px;background:#27134d;cursor:pointer;color:#e6d9ff;font-weight:700}
+.hc-switch:after{content:"";position:absolute;width:23px;height:23px;top:3px;left:4px;border-radius:50%;background:#bca0ff;transition:.15s;box-shadow:0 0 12px #a05cff}
+.hc-switch[aria-checked=true]{background:#6221ce}
+.hc-switch[aria-checked=true]:after{left:32px;background:#fff}
+.hc-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0 4px}
+.hc-row strong{font-size:13px;display:block}
+.hc-row span{font-size:11px;color:#aaa0d1}
+.hc-note{margin-top:22px;color:#8f86b8;font-size:12px}
+@media(max-width:850px){.hc-sidebar{width:155px;padding:18px 9px}.hc-main{padding:18px 14px}.hc-grid{grid-template-columns:1fr}.hc-brand{font-size:21px}}
+@media(max-width:560px){.hc-sidebar{width:118px}.hc-nav button{font-size:12px;padding:11px 8px}.hc-main{padding:14px 10px}.hc-top h1{font-size:24px}.hc-card{padding:13px}}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
 "use strict";
 window.addEventListener("load",function(){
-  if(location.protocol==="file:"){
-    document.body.textContent="Please open this page through GitHub Pages or a local HTTP server.";
-    return;
-  }
+  if(location.protocol==="file:"){document.body.textContent="Please open this page through GitHub Pages or a local HTTP server.";return;}
   var relay=Math.floor(Math.random()*3);
-  window.eaglercraftXOpts={
-    demoMode:false,
-    container:"game_frame",
-    assetsURI:"https://raw.githubusercontent.com/yummyfiles/Minecraft-Launcher/main/mc/1.8.8-wasm/assets.epw",
-    worldsDB:"hcunion-worlds",
-    servers:[],
-    relays:[
-      {addr:"wss://relay.deev.is/",comment:"Relay 1",primary:relay===0},
-      {addr:"wss://relay.lax1dude.net/",comment:"Relay 2",primary:relay===1},
-      {addr:"wss://relay.shhnowisnottheti.me/",comment:"Relay 3",primary:relay===2}
-    ]
-  };
-  var params=new URLSearchParams(location.search);
-  var server=params.get("server");
+  window.eaglercraftXOpts={demoMode:false,container:"game_frame",assetsURI:"https://raw.githubusercontent.com/yummyfiles/Minecraft-Launcher/main/mc/1.8.8-wasm/assets.epw",worldsDB:"hcunion-worlds",servers:[],relays:[
+    {addr:"wss://relay.deev.is/",comment:"Relay 1",primary:relay===0},
+    {addr:"wss://relay.lax1dude.net/",comment:"Relay 2",primary:relay===1},
+    {addr:"wss://relay.shhnowisnottheti.me/",comment:"Relay 3",primary:relay===2}
+  ]};
+  var params=new URLSearchParams(location.search),server=params.get("server");
   if(server)window.eaglercraftXOpts.joinServer=server;
   main();
 });
@@ -40,5 +59,53 @@ window.addEventListener("load",function(){
 </head>
 <body>
 <div id="game_frame"></div>
+<div id="hc-menu" aria-hidden="true">
+  <aside class="hc-sidebar">
+    <div class="hc-brand">HC<small>CLIENT</small></div>
+    <nav class="hc-nav">
+      <button type="button" data-tab="Home">⌂ &nbsp; Home</button>
+      <button type="button" data-tab="Mods" class="active">✿ &nbsp; Mods</button>
+      <button type="button" data-tab="Settings">⚙ &nbsp; Settings</button>
+      <button type="button" data-tab="Profiles">◇ &nbsp; Profiles</button>
+      <button type="button" data-tab="Cosmetics">◉ &nbsp; Cosmetics</button>
+    </nav>
+    <div class="hc-version">HCunion Client<br>1.8.8 • Build 1.0</div>
+  </aside>
+  <main class="hc-main">
+    <header class="hc-top"><div><h1 id="hc-title">Mods</h1><p id="hc-subtitle">Your client interface options.</p></div><button class="hc-close" id="hc-close" aria-label="Close menu">×</button></header>
+    <section class="hc-grid" id="hc-grid">
+      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">▣</div><div><h2>FPS Display</h2><p>Show a small performance readout.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="FPS Display"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Interface-only setting</span></div></div></article>
+      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">⌨</div><div><h2>Keystrokes</h2><p>Show a visual keyboard panel.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Keystrokes"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Does not automate input</span></div></div></article>
+      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">◎</div><div><h2>CPS Counter</h2><p>Display a clicks-per-second counter.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="CPS Counter"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Counts input only; never clicks for you</span></div></div></article>
+      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">✥</div><div><h2>Crosshair Style</h2><p>Choose a simple visual crosshair.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Crosshair Style"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Cosmetic only</span></div></div></article>
+    </section>
+    <div class="hc-note">Press RIGHT SHIFT to close this menu. Combat automation and gameplay macros are not included.</div>
+  </main>
+</div>
+<script>
+(function(){
+  var menu=document.getElementById("hc-menu"),close=document.getElementById("hc-close");
+  function setOpen(open){menu.classList.toggle("open",open);menu.setAttribute("aria-hidden",String(!open));}
+  function toggle(){setOpen(!menu.classList.contains("open"));}
+  window.addEventListener("keydown",function(e){
+    if(e.code==="ShiftRight"||e.key==="Shift"&&e.location===2){e.preventDefault();e.stopImmediatePropagation();toggle();return;}
+    if(e.key==="Escape"&&menu.classList.contains("open")){e.preventDefault();setOpen(false);}
+  },true);
+  close.addEventListener("click",function(){setOpen(false);});
+  document.querySelectorAll(".hc-switch").forEach(function(button){
+    button.addEventListener("click",function(){button.setAttribute("aria-checked",button.getAttribute("aria-checked")!=="true"?"true":"false");});
+  });
+  document.querySelectorAll(".hc-nav button").forEach(function(button){
+    button.addEventListener("click",function(){
+      document.querySelectorAll(".hc-nav button").forEach(function(b){b.classList.remove("active");});
+      button.classList.add("active");
+      var tab=button.getAttribute("data-tab");
+      document.getElementById("hc-title").textContent=tab;
+      document.getElementById("hc-subtitle").textContent=tab==="Mods"?"Your client interface options.":tab+" options are coming soon.";
+      document.getElementById("hc-grid").style.display=tab==="Mods"?"grid":"none";
+    });
+  });
+})();
+</script>
 </body>
 </html>
