@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Validate client files and menu
+      - name: Validate game client files
         run: |
           set -eu
           test -s index.html
@@ -28,16 +28,11 @@ jobs:
           test -s runtime/1.8.8-wasm/index.html
           test -s runtime/1.8.8-wasm/bootstrap.js
           grep -q 'style.css' index.html
-          CLIENT=runtime/1.8.8-wasm/index.html
-          grep -q 'data-tab="Mods"' "$CLIENT"
-          grep -q 'data-tab="Cosmetics"' "$CLIENT"
-          grep -q '<h2>Auto Clicker</h2>' "$CLIENT"
-          grep -q '<h2>Aim Assist</h2>' "$CLIENT"
-          grep -q '<h2>Auto Rod</h2>' "$CLIENT"
-          grep -q '<h2>Macro</h2>' "$CLIENT"
-          ! grep -q 'data-tab="Home"' "$CLIENT"
-          ! grep -q 'data-tab="Settings"' "$CLIENT"
-          ! grep -q 'data-tab="Profiles"' "$CLIENT"
+          grep -q 'runtime/1.8.8-wasm/' index.html
+          grep -q 'bootstrap.js' runtime/1.8.8-wasm/index.html
+          grep -q 'assetsURI' runtime/1.8.8-wasm/index.html
+          ! grep -q 'data-tab="Mods"' runtime/1.8.8-wasm/index.html
+          ! grep -q 'data-tab="Cosmetics"' runtime/1.8.8-wasm/index.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
