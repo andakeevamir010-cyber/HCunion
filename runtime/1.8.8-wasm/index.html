@@ -109,6 +109,7 @@ window.addEventListener("load",function(){
         <div class="hc-row"><div><strong>Range</strong><span>Example setting · 1–20 blocks</span></div><output>8.0</output></div>
         <input class="hc-range" type="range" min="1" max="20" value="8">
         <div class="hc-row"><div><strong>Lock Keybind</strong><span>Example keybind</span></div><kbd>I</kbd></div>
+        <div id="hc-aim-preview-status" class="hc-cosmetic-status" role="status">PREVIEW OFF — press I to toggle this UI preview.</div>
         <div class="hc-row"><div><strong>Lock Mode</strong><span>Example setting</span></div><select class="hc-select"><option>Single Target (Hold)</option></select></div>
         <div class="hc-row"><div><strong>Smoothness</strong><span>Example setting · 1–20</span></div><output>5</output></div>
         <input class="hc-range" type="range" min="1" max="20" value="5">
@@ -162,11 +163,29 @@ window.addEventListener("load",function(){
     return tag==="input"||tag==="textarea"||target.isContentEditable===true;
   }
   function toggle(){setOpen(!menu.classList.contains("open"));}
+  function setAimPreview(enabled){
+    var card=Array.from(document.querySelectorAll(".hc-combat-demo")).find(function(item){return item.querySelector("h2")&&item.querySelector("h2").textContent==="Aim Assist";});
+    if(!card)return;
+    var button=card.querySelector(".hc-switch");
+    if(button){
+      button.setAttribute("aria-checked",String(enabled));
+      button.title=enabled?"Aim Assist preview on (gameplay aim unchanged)":"Aim Assist preview off (gameplay aim unchanged)";
+    }
+    var status=document.getElementById("hc-aim-preview-status");
+    if(status)status.textContent=enabled?"PREVIEW ON — UI only; your in-game aim is unchanged.":"PREVIEW OFF — press I to toggle this UI preview.";
+  }
   window.addEventListener("keydown",function(e){
     var typing=isTextEntry(e.target)||isTextEntry(document.activeElement);
     if(!menu.classList.contains("open")&&!typing){
       if((e.code==="KeyT"||e.code==="Slash")&&!e.ctrlKey&&!e.metaKey&&!e.altKey)chatOpen=true;
       else if(chatOpen&&(e.code==="Enter"||e.code==="NumpadEnter"||e.code==="Escape"))chatOpen=false;
+    }
+    if(e.code==="KeyI"&&!menu.classList.contains("open")&&!typing&&!chatOpen&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+      e.preventDefault();
+      var aimCard=Array.from(document.querySelectorAll(".hc-combat-demo")).find(function(item){return item.querySelector("h2")&&item.querySelector("h2").textContent==="Aim Assist";});
+      var aimSwitch=aimCard&&aimCard.querySelector(".hc-switch");
+      setAimPreview(!(aimSwitch&&aimSwitch.getAttribute("aria-checked")==="true"));
+      return;
     }
     if(e.code==="ShiftRight"||(e.key==="Shift"&&e.location===2)){
       if(chatOpen||typing)return;
