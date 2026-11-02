@@ -60,7 +60,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-f
 .hc-combat-demo .hc-range{width:100%;accent-color:#8e42ff;margin:8px 0}
 .hc-combat-demo .hc-switch:disabled{opacity:.35;cursor:not-allowed}
 .hc-demo-sequence{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:9px 0;color:#bca4e8;font-size:11px}
-.hc-demo-sequence kbd{min-width:0;padding:6px 8px}
+.hc-demo-sequence kbd{min-width:0;padding:6px 8px}.hc-bind-edit{border:1px solid #6940a0;border-radius:6px;background:#171027;color:#d9c8ff;padding:6px 9px;font-size:11px;cursor:pointer}.hc-bind-edit.waiting{border-color:#c28aff;background:#38205b}.hc-slot-input{width:58px;background:#101020;border:1px solid #6940a0;border-radius:6px;color:#e5d8ff;padding:7px;text-align:center;font:inherit}
 @media(max-width:800px){.hc-four-mods{grid-template-columns:1fr}}
 </style>
 <script src="./bootstrap.js"></script>
@@ -110,7 +110,7 @@ window.addEventListener("load",function(){
         <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Aim Assist demo setting"></button></div>
         <div class="hc-row"><div><strong>Range</strong><span>Example setting · 1–20 blocks</span></div><output>8.0</output></div>
         <input class="hc-range" type="range" min="1" max="20" value="8">
-        <div class="hc-row"><div><strong>Lock Keybind</strong><span>Example keybind</span></div><kbd>I</kbd></div>
+        <div class="hc-row"><div><strong>Lock Keybind</strong><span>Example keybind</span></div><span><kbd data-bind="aim">I</kbd> <button type="button" class="hc-bind-edit" data-bind-edit="aim">Change</button></span></div>
         <div id="hc-aim-preview-status" class="hc-cosmetic-status" role="status">PREVIEW OFF — press I to toggle this UI preview.</div>
         <div class="hc-row"><div><strong>Lock Mode</strong><span>Example setting</span></div><select class="hc-select"><option>Single Target (Hold)</option></select></div>
         <div class="hc-row"><div><strong>Smoothness</strong><span>Example setting · 1–20</span></div><output>5</output></div>
@@ -119,17 +119,17 @@ window.addEventListener("load",function(){
       <article class="hc-card hc-combat-demo">
         <div class="hc-card-head"><div class="hc-symbol">⚒</div><div><h2>Auto Rod</h2><p>Automated rod and weapon swapping — unavailable.</p></div><span class="hc-pill">DEMO ONLY</span></div>
         <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Auto Rod demo setting"></button></div>
-        <div class="hc-row"><div><strong>Rod Keybind</strong><span>Example keybind</span></div><kbd>R</kbd></div>
+        <div class="hc-row"><div><strong>Rod Keybind</strong><span>Example keybind</span></div><span><kbd data-bind="rod">R</kbd> <button type="button" class="hc-bind-edit" data-bind-edit="rod">Change</button></span></div>
         <div class="hc-row"><div><strong>Rod Action</strong><span>Example setting</span></div><select class="hc-select"><option>Rod Once, Then Swap</option></select></div>
         <div class="hc-row"><div><strong>Swap Speed</strong><span>Example setting · 1–10 ticks</span></div><output>2</output></div>
         <input class="hc-range" type="range" min="1" max="10" value="2">
         <div class="hc-row"><div><strong>Use Sword After Rod</strong><span>Example setting</span></div><span class="hc-pill">ON</span></div>
-        <div class="hc-row"><div><strong>Sword Slot</strong><span>Example hotbar slot</span></div><output>1</output></div>
+        <div class="hc-row"><div><strong>Sword Slot</strong><span>Example hotbar slot</span></div><input class="hc-slot-input" id="hc-sword-slot" type="number" min="1" max="9" step="1" value="1" aria-label="Sword hotbar slot"></div>
       </article>
       <article class="hc-card hc-combat-demo">
         <div class="hc-card-head"><div class="hc-symbol">▤</div><div><h2>Macro</h2><p>Automated combat/action sequences — unavailable.</p></div><span class="hc-pill">DEMO ONLY</span></div>
         <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Macro demo setting"></button></div>
-        <div class="hc-row"><div><strong>Macro Keybind</strong><span>Example keybind</span></div><kbd>M</kbd></div>
+        <div class="hc-row"><div><strong>Macro Keybind</strong><span>Example keybind</span></div><span><kbd data-bind="macro">M</kbd> <button type="button" class="hc-bind-edit" data-bind-edit="macro">Change</button></span></div>
         <div class="hc-row"><div><strong>Macro Type</strong><span>Example setting</span></div><select class="hc-select"><option>Rod Combo (Example)</option></select></div>
         <div class="hc-row"><div><strong>Delay Between Actions</strong><span>Example setting · 10–500 ms</span></div><output>50</output></div>
         <input class="hc-range" type="range" min="10" max="500" value="50">
@@ -217,6 +217,27 @@ window.addEventListener("load",function(){
   var heldItem=document.getElementById("hc-held-item");
   if(heldItem)heldItem.addEventListener("change",updateClickerStatus);
   setAimPreview(false);
+  var bindingCapture=null;
+  document.querySelectorAll("[data-bind-edit]").forEach(function(button){
+    button.addEventListener("click",function(){
+      if(bindingCapture){bindingCapture.button.classList.remove("waiting");bindingCapture.button.textContent="Change";}
+      bindingCapture={name:button.getAttribute("data-bind-edit"),button:button};
+      button.classList.add("waiting");button.textContent="Press key…";
+    });
+  });
+  window.addEventListener("keydown",function(e){
+    if(!bindingCapture)return;
+    if(e.code==="Escape"){bindingCapture.button.classList.remove("waiting");bindingCapture.button.textContent="Change";bindingCapture=null;return;}
+    if(!/^Key[A-Z]$|^Digit[0-9]$|^F([1-9]|1[0-2])$|^Space$|^Tab$|^CapsLock$|^Insert$|^Delete$|^Home$|^End$|^PageUp$|^PageDown$|^Arrow(Up|Down|Left|Right)$/.test(e.code))return;
+    e.preventDefault();e.stopImmediatePropagation();
+    var code=e.code,label=e.key.length===1?e.key.toUpperCase():e.key;
+    document.querySelector('[data-bind="'+bindingCapture.name+'"]').textContent=label;
+    bindingCapture.button.classList.remove("waiting");bindingCapture.button.textContent="Change";bindingCapture=null;
+  },true);
+  var swordSlot=document.getElementById("hc-sword-slot");
+  if(swordSlot)swordSlot.addEventListener("change",function(){
+    var value=Math.max(1,Math.min(9,Number(swordSlot.value)||1));swordSlot.value=String(value);
+  });
   document.querySelectorAll(".hc-combat-demo input[type=range]").forEach(function(range){
     range.addEventListener("input",function(){
       var row=range.previousElementSibling,output=row&&row.querySelector("output");
