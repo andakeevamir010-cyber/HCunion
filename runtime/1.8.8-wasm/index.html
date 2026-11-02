@@ -5,13 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#080b12">
 <title>HCunion — Minecraft 1.8.8 WASM-GC</title>
-<link rel="icon" href="../../favicon.ico">
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif}
 #game_frame{position:fixed;inset:0;background:#000}
-#top{position:fixed;z-index:10;top:12px;left:12px;display:flex;gap:10px;align-items:center}
+#top{position:fixed;z-index:10;top:12px;left:12px}
 #top a{color:#fff;text-decoration:none;background:#171d2b;border:1px solid #39445d;border-radius:8px;padding:9px 12px;font-size:13px}
 #notice{position:fixed;z-index:9;bottom:10px;left:12px;background:#111a;color:#cbd5e1;padding:7px 10px;border-radius:7px;font:12px Arial}
+#mods-overlay{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;background:#05070bc9;backdrop-filter:blur(5px);padding:18px}
+#mods-overlay.open{display:flex}
+.mods-window{width:min(660px,96vw);max-height:88vh;overflow:auto;background:#111722;border:1px solid #3c4960;border-radius:14px;box-shadow:0 22px 80px #000b}
+.mods-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #2b3546}
+.mods-head h1{font-size:21px;margin:0}.mods-head small{display:block;color:#8fa1ba;font-size:11px;letter-spacing:1.4px;margin-bottom:5px}
+#mods-close{border:1px solid #46546b;background:#202b3b;color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}
+.mods-body{padding:14px 18px 18px}.mod-card{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:15px 2px;border-bottom:1px solid #273244}
+.mod-card:last-of-type{border:0}.mod-card h2{font-size:15px;margin:0 0 5px}.mod-card p{font-size:12px;line-height:1.5;color:#9eacc0;margin:0}
+.mod-card input[type=checkbox]{width:18px;height:18px;accent-color:#8b5cf6}
+.mod-extra{grid-column:1/-1;display:flex;align-items:center;gap:12px;color:#aebbd0;font-size:12px}
+.mod-extra input[type=range]{width:min(250px,55vw);accent-color:#9b7aff}
+#rod-guide{color:#c4b5fd;font-size:12px;margin-top:8px;line-height:1.7}
+.mods-foot{padding:12px 20px;border-top:1px solid #2b3546;color:#8fa1ba;font-size:11px;display:flex;justify-content:space-between;gap:10px}
+@media(max-width:480px){.mods-head{padding:14px}.mods-body{padding:10px 14px}.mods-foot{flex-direction:column}}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
@@ -20,19 +33,16 @@ window.addEventListener("load",function(){
   if(location.protocol==="file:"){document.body.textContent="Please open this page through GitHub Pages or a local HTTP server.";return;}
   var relay=Math.floor(Math.random()*3);
   window.eaglercraftXOpts={
-    demoMode:false,
-    container:"game_frame",
+    demoMode:false,container:"game_frame",
     assetsURI:"https://raw.githubusercontent.com/yummyfiles/Minecraft-Launcher/main/mc/1.8.8-wasm/assets.epw",
-    worldsDB:"hcunion-worlds",
-    servers:[],
+    worldsDB:"hcunion-worlds",servers:[],
     relays:[
       {addr:"wss://relay.deev.is/",comment:"Relay 1",primary:relay===0},
       {addr:"wss://relay.lax1dude.net/",comment:"Relay 2",primary:relay===1},
       {addr:"wss://relay.shhnowisnottheti.me/",comment:"Relay 3",primary:relay===2}
     ]
   };
-  var params=new URLSearchParams(location.search);
-  var server=params.get("server");
+  var params=new URLSearchParams(location.search),server=params.get("server");
   if(server)window.eaglercraftXOpts.joinServer=server;
   main();
 });
@@ -41,6 +51,41 @@ window.addEventListener("load",function(){
 <body>
 <div id="game_frame"></div>
 <div id="top"><a href="../../index.html">← HCunion Client</a></div>
-<div id="notice">Minecraft 1.8.8 • WASM-GC build • Hosted game data loads from the authorized upstream repository</div>
+<div id="notice">Right Shift: open HCunion Mods</div>
+<div id="mods-overlay" aria-hidden="true">
+ <section class="mods-window" role="dialog" aria-modal="true" aria-labelledby="mods-title">
+  <header class="mods-head"><div><small>HCUNION CLIENT • 1.8.8</small><h1 id="mods-title">Mods Menu</h1></div><button id="mods-close" type="button">Close · Right Shift</button></header>
+  <div class="mods-body">
+   <article class="mod-card"><div><h2>Aim Assist</h2><p>Toggle the target-info preference. This menu does not steer your aim or select targets automatically.</p></div><input id="aim-toggle" type="checkbox" aria-label="Aim Assist preference"></article>
+   <article class="mod-card"><div><h2>Auto Clicker</h2><p>CPS practice setting only. No automatic clicks are generated.</p></div><input id="cps-toggle" type="checkbox" aria-label="CPS practice setting"><div class="mod-extra"><label for="cps-range">Practice CPS</label><input id="cps-range" type="range" min="1" max="20" value="10"><strong id="cps-value">10 CPS</strong></div></article>
+   <article class="mod-card"><div><h2>Auto Rod</h2><p>Manual rod-to-sword combo practice reminder.</p></div><input id="rod-toggle" type="checkbox" aria-label="Rod combo practice"><div id="rod-guide">1. Use your rod yourself<br>2. Switch back to your sword yourself<br>3. Perform your own follow-up</div></article>
+  </div>
+  <footer class="mods-foot"><span>Settings save in this browser</span><span>Press Right Shift or Escape to close</span></footer>
+ </section>
+</div>
+<script>
+(function(){
+ "use strict";
+ var overlay=document.getElementById("mods-overlay"),close=document.getElementById("mods-close");
+ var defaults={aim:false,cps:false,rod:false,cpsValue:10};
+ var state=defaults;
+ try{state=Object.assign({},defaults,JSON.parse(localStorage.getItem("hcunion-mod-menu")||"{}"));}catch(e){}
+ var controls={"aim":"aim-toggle","cps":"cps-toggle","rod":"rod-toggle"};
+ Object.keys(controls).forEach(function(k){var el=document.getElementById(controls[k]);el.checked=!!state[k];el.addEventListener("change",function(){state[k]=el.checked;save();});});
+ var range=document.getElementById("cps-range"),value=document.getElementById("cps-value");
+ range.value=Math.max(1,Math.min(20,Number(state.cpsValue)||10));value.textContent=range.value+" CPS";
+ range.addEventListener("input",function(){state.cpsValue=Number(range.value);value.textContent=range.value+" CPS";save();});
+ function save(){try{localStorage.setItem("hcunion-mod-menu",JSON.stringify(state));}catch(e){}}
+ function openMenu(){overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");}
+ function closeMenu(){overlay.classList.remove("open");overlay.setAttribute("aria-hidden","true");}
+ close.addEventListener("click",closeMenu);
+ overlay.addEventListener("click",function(e){if(e.target===overlay)closeMenu();});
+ window.addEventListener("keydown",function(e){
+   var rightShift=e.code==="ShiftRight"||(e.key==="Shift"&&e.location===2);
+   if(rightShift){e.preventDefault();e.stopImmediatePropagation();if(overlay.classList.contains("open"))closeMenu();else openMenu();return;}
+   if(e.key==="Escape"&&overlay.classList.contains("open")){e.preventDefault();e.stopImmediatePropagation();closeMenu();}
+ },true);
+})();
+</script>
 </body>
 </html>
