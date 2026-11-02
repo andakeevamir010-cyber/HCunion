@@ -97,6 +97,8 @@ window.addEventListener("load",function(){
       <article class="hc-card hc-combat-demo">
         <div class="hc-card-head"><div class="hc-symbol">♧</div><div><h2>Auto Clicker</h2><p>Automated clicking — unavailable.</p></div><span class="hc-pill">DEMO ONLY</span></div>
         <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Auto Clicker demo setting"></button></div>
+        <div class="hc-row"><div><strong>Held Item (demo)</strong><span>Simulate the sword-only condition</span></div><select id="hc-held-item" class="hc-select"><option value="sword">Sword held</option><option value="other">Other item</option></select></div>
+        <div id="hc-clicker-status" class="hc-cosmetic-status" role="status">OFF — Aim Assist preview is off.</div>
         <div class="hc-row"><div><strong>Clicks Per Second (CPS)</strong><span>Example setting · 1–20 CPS</span></div><output>15 CPS</output></div>
         <input class="hc-range" type="range" min="1" max="20" value="15">
         <div class="hc-row"><div><strong>Click Type</strong><span>Example setting</span></div><select class="hc-select"><option>Left Click (Default)</option></select></div>
@@ -164,15 +166,25 @@ window.addEventListener("load",function(){
   }
   function toggle(){setOpen(!menu.classList.contains("open"));}
   function setAimPreview(enabled){
-    var card=Array.from(document.querySelectorAll(".hc-combat-demo")).find(function(item){return item.querySelector("h2")&&item.querySelector("h2").textContent==="Aim Assist";});
-    if(!card)return;
-    var button=card.querySelector(".hc-switch");
-    if(button){
-      button.setAttribute("aria-checked",String(enabled));
-      button.title=enabled?"Aim Assist preview on (gameplay aim unchanged)":"Aim Assist preview off (gameplay aim unchanged)";
-    }
-    var status=document.getElementById("hc-aim-preview-status");
-    if(status)status.textContent=enabled?"PREVIEW ON — UI only; your in-game aim is unchanged.":"PREVIEW OFF — press I to toggle this UI preview.";
+    var cards=Array.from(document.querySelectorAll(".hc-combat-demo"));
+    var aimCard=cards.find(function(item){return item.querySelector("h2")&&item.querySelector("h2").textContent==="Aim Assist";});
+    var clickerCard=cards.find(function(item){return item.querySelector("h2")&&item.querySelector("h2").textContent==="Auto Clicker";});
+    var aimButton=aimCard&&aimCard.querySelector(".hc-switch");
+    var clickerButton=clickerCard&&clickerCard.querySelector(".hc-switch");
+    if(aimButton){aimButton.setAttribute("aria-checked",String(enabled));aimButton.title=enabled?"Aim Assist preview on (gameplay unchanged)":"Aim Assist preview off (gameplay unchanged)";}
+    if(clickerButton){clickerButton.setAttribute("aria-checked",String(enabled));clickerButton.disabled=true;clickerButton.title="Linked to Aim Assist preview; gameplay clicking is not implemented";}
+    var aimStatus=document.getElementById("hc-aim-preview-status");
+    if(aimStatus)aimStatus.textContent=enabled?"PREVIEW ON — UI only; your in-game aim is unchanged.":"PREVIEW OFF — press I to toggle this UI preview.";
+    updateClickerStatus();
+  }
+  function updateClickerStatus(){
+    var aimCard=Array.from(document.querySelectorAll(".hc-combat-demo")).find(function(item){return item.querySelector("h2")&&item.querySelector("h2").textContent==="Aim Assist";});
+    var aimButton=aimCard&&aimCard.querySelector(".hc-switch");
+    var enabled=!!(aimButton&&aimButton.getAttribute("aria-checked")==="true");
+    var held=document.getElementById("hc-held-item");
+    var sword=!!(held&&held.value==="sword");
+    var status=document.getElementById("hc-clicker-status");
+    if(status)status.textContent=enabled?(sword?"DEMO READY — Aim Assist preview ON; sword selected in item simulator. No clicks are sent.":"WAITING — Aim Assist preview ON; simulated held item is not a sword."):"OFF — Aim Assist preview is off.";
   }
   window.addEventListener("keydown",function(e){
     var typing=isTextEntry(e.target)||isTextEntry(document.activeElement);
@@ -196,11 +208,15 @@ window.addEventListener("load",function(){
   close.addEventListener("click",function(){setOpen(false);});
   document.querySelectorAll(".hc-combat-demo .hc-switch").forEach(function(button){
     button.addEventListener("click",function(){
-      var enabled=button.getAttribute("aria-checked")!=="true";
-      button.setAttribute("aria-checked",String(enabled));
-      button.title=enabled?"Demo setting on (gameplay unchanged)":"Demo setting off (gameplay unchanged)";
+      var card=button.closest(".hc-combat-demo");
+      var name=card.querySelector("h2").textContent;
+      if(name==="Aim Assist")setAimPreview(button.getAttribute("aria-checked")!=="true");
+      else if(name!=="Auto Clicker"){var enabled=button.getAttribute("aria-checked")!=="true";button.setAttribute("aria-checked",String(enabled));}
     });
   });
+  var heldItem=document.getElementById("hc-held-item");
+  if(heldItem)heldItem.addEventListener("change",updateClickerStatus);
+  setAimPreview(false);
   document.querySelectorAll(".hc-combat-demo input[type=range]").forEach(function(range){
     range.addEventListener("input",function(){
       var row=range.previousElementSibling,output=row&&row.querySelector("output");
