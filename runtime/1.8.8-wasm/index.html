@@ -45,6 +45,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-f
 
 .hc-cosmetics[hidden]{display:none}.hc-cosmetic-intro{display:flex;flex-direction:column;gap:4px;margin:0 0 14px;color:#eeeaff}.hc-cosmetic-intro span{font-size:12px;color:#aaa0d1;line-height:1.5}.hc-cosmetic-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:13px}.hc-cosmetic-card{min-width:0;padding:13px;border:1px solid #5521a5;border-radius:10px;background:linear-gradient(145deg,rgba(17,14,37,.94),rgba(9,9,23,.96))}.hc-cosmetic-art{height:76px;border:1px solid #38245c;border-radius:8px;background:radial-gradient(circle,#44206e,#100d20 70%);display:grid;place-items:center;color:#c99aff;font-size:38px;text-shadow:0 0 20px #a34cff}.wing-art{color:#9bd5ff}.hat-art{color:#f0c8ff}.aura-art{color:#d8a6ff}.trail-art{color:#90dfff}.pet-art{color:#9dffcf}.emote-art{color:#ffe29a}.name-art{color:#e5a5ff}.hc-cosmetic-card h2{font-size:15px;margin:10px 0 3px}.hc-cosmetic-card p{min-height:34px;font-size:11px;color:#aaa0d1;margin:0 0 10px}.hc-cosmetic-actions{display:flex;gap:6px}.hc-cosmetic-actions select{min-width:0;flex:1;background:#111020;border:1px solid #514078;border-radius:6px;color:#e8ddff;padding:7px 5px;font-size:10px}.hc-equip{border:1px solid #873cff;border-radius:6px;background:#5120a3;color:white;padding:6px 8px;font-size:11px;cursor:pointer}.hc-equip.selected{background:#241044;color:#d9bdff;border-color:#b58aff}.hc-cosmetic-status{margin-top:13px;padding:10px 12px;border:1px solid #352254;border-radius:7px;color:#bda9e8;font-size:12px}
 @media(max-width:1100px){.hc-cosmetic-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}}@media(max-width:560px){.hc-cosmetic-grid{grid-template-columns:1fr}}
+
+.hc-profiles[hidden]{display:none}.hc-profile-intro{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}.hc-profile-intro strong{font-size:18px}.hc-profile-intro span,.hc-profile-footnote{font-size:12px;color:#aaa0d1;line-height:1.5}.hc-profile-create{display:flex;gap:10px;margin-bottom:14px}.hc-profile-create input,.hc-profile-current select{background:#0d0c1c;color:#eee7ff;border:1px solid #594080;border-radius:7px;padding:10px 12px;font:inherit;min-width:0}.hc-profile-create input{flex:1}.hc-profile-current{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:1px solid #4b267e;border-radius:9px;background:#0d0b1b}.hc-profile-current strong,.hc-profile-current small{display:block}.hc-profile-current small{color:#aaa0d1;font-size:11px;margin-top:4px}.hc-profile-current select{min-width:190px}.hc-profile-buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.hc-danger{border-color:#8b385f;background:#321326}.hc-profile-footnote{margin-top:14px}@media(max-width:600px){.hc-profile-create,.hc-profile-current{flex-direction:column;align-items:stretch}.hc-profile-current select{width:100%;min-width:0}}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
@@ -105,6 +107,14 @@ window.addEventListener("load",function(){
         <div class="hc-setting"><div><strong>Style</strong><small>Cosmetic display setting.</small></div><select class="hc-select"><option>Classic</option><option>Dot</option><option>Plus</option></select></div>
       </article>
     </section>
+    <section id="hc-profiles" class="hc-profiles" hidden>
+      <div class="hc-profile-intro"><strong>Your client profiles</strong><span>Save and switch between your preferred visual settings and cosmetic selections on this device.</span></div>
+      <div class="hc-profile-create"><input id="hc-profile-name" type="text" maxlength="24" placeholder="Enter profile name" aria-label="Profile name"><button id="hc-profile-save" class="hc-action">Save current setup</button></div>
+      <div class="hc-profile-current"><div><strong>Saved profiles</strong><small id="hc-profile-count">No profiles saved yet.</small></div><select id="hc-profile-list" aria-label="Saved profiles"><option value="">Choose a profile</option></select></div>
+      <div class="hc-profile-buttons"><button id="hc-profile-load" class="hc-action">Load profile</button><button id="hc-profile-update" class="hc-action">Update selected</button><button id="hc-profile-delete" class="hc-action hc-danger">Delete profile</button></div>
+      <div class="hc-cosmetic-status" id="hc-profile-status" role="status">Profiles are stored locally in this browser on this device.</div>
+      <p class="hc-profile-footnote">Profiles do not sync between devices or change server-side Minecraft settings.</p>
+    </section>
     <section id="hc-cosmetics" class="hc-cosmetics" hidden>
       <div class="hc-cosmetic-intro"><strong>Cosmetic collection</strong><span>Choose styles for your HCunion look. These are menu previews; in-world rendering and visibility to other players are not connected yet.</span></div>
       <div class="hc-cosmetic-grid">
@@ -147,15 +157,27 @@ window.addEventListener("load",function(){
       document.getElementById("hc-cosmetic-status").textContent=kind+": "+choice+" selected for menu preview. In-game display and visibility to other players are not implemented yet.";
     });
   });
+  var profileName=document.getElementById("hc-profile-name"),profileList=document.getElementById("hc-profile-list"),profileStatus=document.getElementById("hc-profile-status"),profileCount=document.getElementById("hc-profile-count");
+  var profiles={};
+  try{profiles=JSON.parse(localStorage.getItem("hcunion-client-profiles")||"{}");}catch(err){profiles={};}
+  function refreshProfiles(selected){profileList.innerHTML='<option value="">Choose a profile</option>';Object.keys(profiles).sort().forEach(function(name){var option=document.createElement("option");option.value=name;option.textContent=name;profileList.appendChild(option);});profileCount.textContent=Object.keys(profiles).length?Object.keys(profiles).length+" profile(s) saved on this device.":"No profiles saved yet.";if(selected&&profiles[selected])profileList.value=selected;}
+  function captureProfile(){return {switches:Array.from(document.querySelectorAll(".hc-switch")).map(function(b){return b.getAttribute("aria-checked")==="true";}),tempo:tempo.value,crosshair:document.querySelector(".hc-select")?document.querySelector(".hc-select").value:"Classic",cosmetics:Array.from(document.querySelectorAll(".hc-cosmetic-card select")).map(function(x){return x.value;})};}
+  function persistProfiles(){try{localStorage.setItem("hcunion-client-profiles",JSON.stringify(profiles));return true;}catch(err){profileStatus.textContent="Could not save profiles in this browser. Check browser storage settings.";return false;}}
+  document.getElementById("hc-profile-save").addEventListener("click",function(){var name=profileName.value.trim();if(!name){profileStatus.textContent="Enter a profile name first.";return;}profiles[name]=captureProfile();if(persistProfiles()){refreshProfiles(name);profileStatus.textContent='Saved "'+name+'" on this device.';profileName.value="";}});
+  document.getElementById("hc-profile-load").addEventListener("click",function(){var name=profileList.value,p=profiles[name];if(!p){profileStatus.textContent="Choose a saved profile first.";return;}document.querySelectorAll(".hc-switch").forEach(function(b,i){b.setAttribute("aria-checked",p.switches[i]?"true":"false");});tempo.value=p.tempo||3;tempo.dispatchEvent(new Event("input"));var cross=document.querySelector(".hc-select");if(cross)cross.value=p.crosshair||"Classic";document.querySelectorAll(".hc-cosmetic-card select").forEach(function(x,i){if(p.cosmetics&&p.cosmetics[i])x.value=p.cosmetics[i];});profileStatus.textContent='Loaded "'+name+'".';});
+  document.getElementById("hc-profile-update").addEventListener("click",function(){var name=profileList.value;if(!name){profileStatus.textContent="Choose a saved profile to update.";return;}profiles[name]=captureProfile();if(persistProfiles()){refreshProfiles(name);profileStatus.textContent='Updated "'+name+'".';}});
+  document.getElementById("hc-profile-delete").addEventListener("click",function(){var name=profileList.value;if(!name||!profiles[name]){profileStatus.textContent="Choose a saved profile to delete.";return;}delete profiles[name];if(persistProfiles()){refreshProfiles();profileStatus.textContent='Deleted "'+name+'".';}});
+  refreshProfiles();
   document.querySelectorAll(".hc-nav button").forEach(function(button){
     button.addEventListener("click",function(){
       document.querySelectorAll(".hc-nav button").forEach(function(b){b.classList.remove("active");});
       button.classList.add("active");
       var tab=button.getAttribute("data-tab");
       document.getElementById("hc-title").textContent=tab;
-      document.getElementById("hc-subtitle").textContent=tab==="Mods"?"Your client interface options.":tab==="Cosmetics"?"Browse capes, wings, hats, auras, and more.":tab+" options are coming soon.";
+      document.getElementById("hc-subtitle").textContent=tab==="Mods"?"Your client interface options.":tab==="Cosmetics"?"Browse capes, wings, hats, auras, and more.":tab==="Profiles"?"Save and load your client setups.":tab+" options are coming soon.";
       document.getElementById("hc-grid").style.display=tab==="Mods"?"grid":"none";
       document.getElementById("hc-cosmetics").hidden=tab!=="Cosmetics";
+      document.getElementById("hc-profiles").hidden=tab!=="Profiles";
       document.getElementById("hc-mod-note").style.display=tab==="Mods"?"block":"none";
     });
   });
