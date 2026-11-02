@@ -2,26 +2,24 @@
 
 A browser-hosted client project targeting **Minecraft Java 1.8.8 only**.
 
-## Current project status
+## Current repository contents
 
-The repository contains the HCunion settings interface and a runtime launch page:
-- `index.html` — client interface
-- `style.css` — dark HCunion theme
-- `app.js` — local settings and shortcut storage
-- `runtime/1.8.8-wasm/index.html` — HCunion launch wrapper for the 1.8.8 WASM-GC client
-- `runtime/1.8.8-wasm/bootstrap.js` — upstream bootstrap loader
+- `index.html` — HCunion settings interface
+- `style.css` — dark purple HCunion theme
+- `app.js` — local settings, key display preference, and manual practice guide
+- `runtime/1.8.8-wasm/` — runtime launch wrapper and bootstrap files
 
-**Runtime integration is in progress.** The launch page loads the WASM-GC bootstrap locally and fetches the large EPW game asset from the upstream Minecraft-Launcher repository. The upstream owner has reportedly granted permission to use the project files. The launch flow still needs browser testing before it can be called fully working.
+## Current status
 
-## Requested feature scope
+The repository is **not yet a finished playable client**. The settings page is implemented, but the WASM-GC launch flow still needs browser testing and the actual runtime integration is incomplete.
 
-Keep the client limited to these requested modules:
-1. **Aim Assist** — settings and configurable activation-key UI (default key: `I`). The current interface does not perform automated aiming.
-2. **Auto Clicker** — configurable CPS preference and practice counter UI; no automatic gameplay clicks.
-3. **Auto Rod** — configurable manual rod-to-sword combo reminder.
-4. **Custom Macros** — user-defined non-combat text shortcuts saved locally and copied to the clipboard.
+## Included interface modules
 
-Do not add unrelated HUD or gameplay modules such as FPS, Keystrokes, Compass, or FreeLook.
+1. **Aim Assist** — display-only configuration preview. It does not lock onto players or move the player's aim.
+2. **Auto Clicker** — practice CPS preference only; it does not generate gameplay clicks.
+3. **Auto Rod** — manual rod-to-sword practice guide; it does not switch slots or send game inputs.
+
+The Macro feature has been removed from the interface and settings storage. No unrelated HUD modules are included.
 
 ## Hosting
 
@@ -29,4 +27,4 @@ Designed for GitHub Pages. Enable Pages for the repository's `main` branch and r
 
 ## Credits and licensing
 
-No Minecraft game code, assets, or third-party runtime are bundled in this repository at this stage. Before adding a runtime, verify its source, license, attribution requirements, and redistribution permissions.
+Before bundling or redistributing any third-party runtime or game assets, verify the source license, attribution requirements, and redistribution permissions.
