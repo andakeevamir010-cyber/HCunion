@@ -184,8 +184,8 @@ window.addEventListener("load",function(){
   });
   document.querySelectorAll(".hc-combat-demo input[type=range]").forEach(function(range){
     range.addEventListener("input",function(){
-      var output=range.previousElementSibling;
-      if(output&&output.tagName==="OUTPUT"){
+      var row=range.previousElementSibling,output=row&&row.querySelector("output");
+      if(output){
         output.textContent=range.value+(range.min==="1"&&range.max==="20"&&range.closest(".hc-card").querySelector("h2").textContent==="Auto Clicker"?" CPS":"");
       }
     });
