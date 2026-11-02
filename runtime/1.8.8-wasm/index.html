@@ -47,6 +47,22 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-f
 @media(max-width:1100px){.hc-cosmetic-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}}@media(max-width:560px){.hc-cosmetic-grid{grid-template-columns:1fr}}
 
 .hc-profiles[hidden]{display:none}.hc-profile-intro{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}.hc-profile-intro strong{font-size:18px}.hc-profile-intro span,.hc-profile-footnote{font-size:12px;color:#aaa0d1;line-height:1.5}.hc-profile-create{display:flex;gap:10px;margin-bottom:14px}.hc-profile-create input,.hc-profile-current select{background:#0d0c1c;color:#eee7ff;border:1px solid #594080;border-radius:7px;padding:10px 12px;font:inherit;min-width:0}.hc-profile-create input{flex:1}.hc-profile-current{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:1px solid #4b267e;border-radius:9px;background:#0d0b1b}.hc-profile-current strong,.hc-profile-current small{display:block}.hc-profile-current small{color:#aaa0d1;font-size:11px;margin-top:4px}.hc-profile-current select{min-width:190px}.hc-profile-buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.hc-danger{border-color:#8b385f;background:#321326}.hc-profile-footnote{margin-top:14px}@media(max-width:600px){.hc-profile-create,.hc-profile-current{flex-direction:column;align-items:stretch}.hc-profile-current select{width:100%;min-width:0}}
+
+.hc-four-mods{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:14px}
+.hc-combat-demo{padding:14px 16px;min-width:0}
+.hc-combat-demo .hc-card-head{gap:12px;padding-bottom:12px;border-bottom:1px solid #28213f}
+.hc-combat-demo .hc-card-head h2{font-size:19px}
+.hc-combat-demo .hc-card-head p{font-size:12px}
+.hc-combat-demo .hc-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid #28213f}
+.hc-combat-demo .hc-row strong,.hc-combat-demo .hc-row span{display:block}
+.hc-combat-demo .hc-row strong{font-size:12px}
+.hc-combat-demo .hc-row span{font-size:10px;color:#aaa0d1;margin-top:2px}
+.hc-combat-demo output,.hc-combat-demo kbd,.hc-combat-demo .hc-select{background:#101020;border:1px solid #514078;border-radius:6px;color:#d9c8ff;padding:7px 10px;font:inherit;font-size:12px;min-width:70px;text-align:center}
+.hc-combat-demo .hc-range{width:100%;accent-color:#8e42ff;margin:8px 0}
+.hc-combat-demo .hc-switch:disabled{opacity:.35;cursor:not-allowed}
+.hc-demo-sequence{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:9px 0;color:#bca4e8;font-size:11px}
+.hc-demo-sequence kbd{min-width:0;padding:6px 8px}
+@media(max-width:800px){.hc-four-mods{grid-template-columns:1fr}}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
@@ -80,31 +96,46 @@ window.addEventListener("load",function(){
     <div class="hc-version">HCunion Client<br>1.8.8 • Build 1.0</div>
   </aside>
   <main class="hc-main">
-    <header class="hc-top"><div><h1 id="hc-title">Mods</h1><p id="hc-subtitle">Your client interface options.</p></div><button class="hc-close" id="hc-close" aria-label="Close menu">×</button></header>
-    <section class="hc-grid" id="hc-grid">
-      <article class="hc-card">
-        <div class="hc-card-head"><div class="hc-symbol">◷</div><div><h2>Bow Agro Trainer</h2><p>Practice a steady visual timing rhythm.</p></div><span class="hc-pill">PRACTICE</span></div>
-        <div class="hc-setting"><div><strong>Practice tempo</strong><small>Set the rhythm from 1 to 6 beats per second.</small></div><output id="tempo-value">3 BPS</output></div>
-        <input class="hc-range" id="tempo" type="range" min="1" max="6" value="3"><div class="hc-range-labels"><span>1</span><span>6</span></div>
-        <div class="hc-setting"><div><strong>Trainer status</strong><small id="trainer-status">Ready when you are.</small></div><button class="hc-action" id="trainer-toggle">Start</button></div>
-        <div class="hc-beat" id="beat-indicator"><span></span><b>READY</b></div>
-        <small class="hc-disclaimer">Visual metronome only. It does not control the game or perform actions.</small>
+    <header class="hc-top"><div><h1 id="hc-title">Mods</h1><p id="hc-subtitle">Your four mod cards — interface preview only.</p></div><button class="hc-close" id="hc-close" aria-label="Close menu">×</button></header>
+    <section class="hc-grid hc-four-mods" id="hc-grid">
+      <article class="hc-card hc-combat-demo">
+        <div class="hc-card-head"><div class="hc-symbol">♧</div><div><h2>Auto Clicker</h2><p>Automated clicking — unavailable.</p></div><span class="hc-pill">DEMO ONLY</span></div>
+        <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" disabled aria-disabled="true" aria-label="Auto Clicker unavailable"></button></div>
+        <div class="hc-row"><div><strong>Clicks Per Second (CPS)</strong><span>Example setting · 1–20 CPS</span></div><output>15 CPS</output></div>
+        <input class="hc-range" type="range" min="1" max="20" value="15" disabled>
+        <div class="hc-row"><div><strong>Click Type</strong><span>Example setting</span></div><select class="hc-select" disabled><option>Left Click (Default)</option></select></div>
+        <div class="hc-row"><div><strong>Burst Mode</strong><span>Example setting</span></div><span class="hc-pill">OFF</span></div>
+        <div class="hc-row"><div><strong>Clicks Per Burst</strong><span>10 · example</span></div><div><strong>Burst Duration</strong><span>1.0 seconds · example</span></div></div>
       </article>
-      <article class="hc-card">
-        <div class="hc-card-head"><div class="hc-symbol">⌨</div><div><h2>Keystrokes</h2><p>Show a visual keyboard panel.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Keystrokes"></button></div>
-        <div class="hc-setting"><div><strong>Display option</strong><small>Visual display only; no automated input.</small></div></div>
+      <article class="hc-card hc-combat-demo">
+        <div class="hc-card-head"><div class="hc-symbol">◎</div><div><h2>Aim Assist</h2><p>Automated player aiming — unavailable.</p></div><span class="hc-pill">DEMO ONLY</span></div>
+        <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" disabled aria-disabled="true" aria-label="Aim Assist unavailable"></button></div>
+        <div class="hc-row"><div><strong>Range</strong><span>Example setting · 1–20 blocks</span></div><output>8.0</output></div>
+        <input class="hc-range" type="range" min="1" max="20" value="8" disabled>
+        <div class="hc-row"><div><strong>Lock Keybind</strong><span>Example keybind</span></div><kbd>I</kbd></div>
+        <div class="hc-row"><div><strong>Lock Mode</strong><span>Example setting</span></div><select class="hc-select" disabled><option>Single Target (Hold)</option></select></div>
+        <div class="hc-row"><div><strong>Smoothness</strong><span>Example setting · 1–20</span></div><output>5</output></div>
+        <input class="hc-range" type="range" min="1" max="20" value="5" disabled>
       </article>
-      <article class="hc-card">
-        <div class="hc-card-head"><div class="hc-symbol">▣</div><div><h2>FPS Display</h2><p>Show a small performance readout.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="FPS Display"></button></div>
-        <div class="hc-setting"><div><strong>Display option</strong><small>Interface-only setting.</small></div></div>
+      <article class="hc-card hc-combat-demo">
+        <div class="hc-card-head"><div class="hc-symbol">⚒</div><div><h2>Auto Rod</h2><p>Automated rod and weapon swapping — unavailable.</p></div><span class="hc-pill">DEMO ONLY</span></div>
+        <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" disabled aria-disabled="true" aria-label="Auto Rod unavailable"></button></div>
+        <div class="hc-row"><div><strong>Rod Keybind</strong><span>Example keybind</span></div><kbd>R</kbd></div>
+        <div class="hc-row"><div><strong>Rod Action</strong><span>Example setting</span></div><select class="hc-select" disabled><option>Rod Once, Then Swap</option></select></div>
+        <div class="hc-row"><div><strong>Swap Speed</strong><span>Example setting · 1–10 ticks</span></div><output>2</output></div>
+        <input class="hc-range" type="range" min="1" max="10" value="2" disabled>
+        <div class="hc-row"><div><strong>Use Sword After Rod</strong><span>Example setting</span></div><span class="hc-pill">ON</span></div>
+        <div class="hc-row"><div><strong>Sword Slot</strong><span>Example hotbar slot</span></div><output>1</output></div>
       </article>
-      <article class="hc-card">
-        <div class="hc-card-head"><div class="hc-symbol">◎</div><div><h2>CPS Counter</h2><p>Display a clicks-per-second counter.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="CPS Counter"></button></div>
-        <div class="hc-setting"><div><strong>Display option</strong><small>Counts input only; never clicks for you.</small></div></div>
-      </article>
-      <article class="hc-card">
-        <div class="hc-card-head"><div class="hc-symbol">✥</div><div><h2>Crosshair Style</h2><p>Choose a simple visual crosshair.</p></div><button class="hc-switch" role="switch" aria-checked="true" aria-label="Crosshair Style"></button></div>
-        <div class="hc-setting"><div><strong>Style</strong><small>Cosmetic display setting.</small></div><select class="hc-select"><option>Classic</option><option>Dot</option><option>Plus</option></select></div>
+      <article class="hc-card hc-combat-demo">
+        <div class="hc-card-head"><div class="hc-symbol">▤</div><div><h2>Macro</h2><p>Automated combat/action sequences — unavailable.</p></div><span class="hc-pill">DEMO ONLY</span></div>
+        <div class="hc-row"><div><strong>Enabled</strong><span>Controls shown for layout preview only.</span></div><button class="hc-switch" disabled aria-disabled="true" aria-label="Macro unavailable"></button></div>
+        <div class="hc-row"><div><strong>Macro Keybind</strong><span>Example keybind</span></div><kbd>M</kbd></div>
+        <div class="hc-row"><div><strong>Macro Type</strong><span>Example setting</span></div><select class="hc-select" disabled><option>Rod Combo (Example)</option></select></div>
+        <div class="hc-row"><div><strong>Delay Between Actions</strong><span>Example setting · 10–500 ms</span></div><output>50</output></div>
+        <input class="hc-range" type="range" min="10" max="500" value="50" disabled>
+        <div class="hc-row"><div><strong>Actions</strong><span>Illustrative sequence only</span></div><span class="hc-pill">PREVIEW</span></div>
+        <div class="hc-demo-sequence"><kbd>Rod</kbd><span>→</span><kbd>Swap</kbd><span>→</span><kbd>Action</kbd><span>→</span><kbd>Repeat</kbd></div>
       </article>
     </section>
     <section id="hc-profiles" class="hc-profiles" hidden>
@@ -129,7 +160,7 @@ window.addEventListener("load",function(){
       </div>
       <div class="hc-cosmetic-status" id="hc-cosmetic-status" role="status">No cosmetic preview selected.</div>
     </section>
-    <div class="hc-note" id="hc-mod-note">Press RIGHT SHIFT to close this menu. These tools are visual and practice-only; no combat automation or gameplay macros.</div>
+    <div class="hc-note" id="hc-mod-note">Press RIGHT SHIFT to close this menu. Combat automation cards are visual demos; their controls are disabled.</div>
   </main>
 </div>
 <script>
