@@ -39,6 +39,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-f
 .hc-note{margin-top:22px;color:#8f86b8;font-size:12px}
 @media(max-width:850px){.hc-sidebar{width:155px;padding:18px 9px}.hc-main{padding:18px 14px}.hc-grid{grid-template-columns:1fr}.hc-brand{font-size:21px}}
 @media(max-width:560px){.hc-sidebar{width:118px}.hc-nav button{font-size:12px;padding:11px 8px}.hc-main{padding:14px 10px}.hc-top h1{font-size:24px}.hc-card{padding:13px}}
+
+.hc-grid{align-items:start}.hc-setting{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0 7px;border-bottom:1px solid #28213f}.hc-setting strong{display:block;font-size:13px}.hc-setting small{display:block;color:#aaa0d1;font-size:11px;margin-top:2px}.hc-pill{margin-left:auto;padding:5px 10px;border:1px solid #7134d6;border-radius:20px;color:#c8a8ff;font-size:10px;letter-spacing:1px}.hc-range{width:100%;accent-color:#8e42ff;margin:13px 0 0}.hc-range-labels{display:flex;justify-content:space-between;color:#aaa0d1;font-size:11px}.hc-setting output{border:1px solid #55418b;border-radius:6px;padding:5px 10px;color:#d5c5ff;font-size:13px;min-width:68px;text-align:center}.hc-action,.hc-select{border:1px solid #873cff;border-radius:7px;background:#241044;color:#eee5ff;padding:8px 14px;font:inherit;cursor:pointer}.hc-action.running{background:#6623c8}.hc-beat{height:72px;margin-top:13px;border:1px solid #352254;border-radius:8px;background:#0b0b19;display:flex;align-items:center;justify-content:center;gap:12px;color:#a99bcf;font-size:11px;letter-spacing:2px}.hc-beat span{width:15px;height:15px;border-radius:50%;background:#543b7b;box-shadow:0 0 0 5px #543b7b22}.hc-beat.pulse span{background:#c28aff;box-shadow:0 0 22px #a34cff,0 0 0 8px #8c3bff30}.hc-disclaimer{display:block;color:#8e85b2;font-size:10px;line-height:1.45;margin-top:10px}.hc-select{max-width:145px;padding:7px 9px;font-size:12px}
+@media(max-width:850px){.hc-setting{gap:8px}}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
@@ -74,12 +77,32 @@ window.addEventListener("load",function(){
   <main class="hc-main">
     <header class="hc-top"><div><h1 id="hc-title">Mods</h1><p id="hc-subtitle">Your client interface options.</p></div><button class="hc-close" id="hc-close" aria-label="Close menu">×</button></header>
     <section class="hc-grid" id="hc-grid">
-      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">▣</div><div><h2>FPS Display</h2><p>Show a small performance readout.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="FPS Display"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Interface-only setting</span></div></div></article>
-      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">⌨</div><div><h2>Keystrokes</h2><p>Show a visual keyboard panel.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Keystrokes"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Does not automate input</span></div></div></article>
-      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">◎</div><div><h2>CPS Counter</h2><p>Display a clicks-per-second counter.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="CPS Counter"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Counts input only; never clicks for you</span></div></div></article>
-      <article class="hc-card"><div class="hc-card-head"><div class="hc-symbol">✥</div><div><h2>Crosshair Style</h2><p>Choose a simple visual crosshair.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Crosshair Style"></button></div><div class="hc-row"><div><strong>Display option</strong><span>Cosmetic only</span></div></div></article>
+      <article class="hc-card">
+        <div class="hc-card-head"><div class="hc-symbol">◷</div><div><h2>Bow Agro Trainer</h2><p>Practice a steady visual timing rhythm.</p></div><span class="hc-pill">PRACTICE</span></div>
+        <div class="hc-setting"><div><strong>Practice tempo</strong><small>Set the rhythm from 1 to 6 beats per second.</small></div><output id="tempo-value">3 BPS</output></div>
+        <input class="hc-range" id="tempo" type="range" min="1" max="6" value="3"><div class="hc-range-labels"><span>1</span><span>6</span></div>
+        <div class="hc-setting"><div><strong>Trainer status</strong><small id="trainer-status">Ready when you are.</small></div><button class="hc-action" id="trainer-toggle">Start</button></div>
+        <div class="hc-beat" id="beat-indicator"><span></span><b>READY</b></div>
+        <small class="hc-disclaimer">Visual metronome only. It does not control the game or perform actions.</small>
+      </article>
+      <article class="hc-card">
+        <div class="hc-card-head"><div class="hc-symbol">⌨</div><div><h2>Keystrokes</h2><p>Show a visual keyboard panel.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="Keystrokes"></button></div>
+        <div class="hc-setting"><div><strong>Display option</strong><small>Visual display only; no automated input.</small></div></div>
+      </article>
+      <article class="hc-card">
+        <div class="hc-card-head"><div class="hc-symbol">▣</div><div><h2>FPS Display</h2><p>Show a small performance readout.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="FPS Display"></button></div>
+        <div class="hc-setting"><div><strong>Display option</strong><small>Interface-only setting.</small></div></div>
+      </article>
+      <article class="hc-card">
+        <div class="hc-card-head"><div class="hc-symbol">◎</div><div><h2>CPS Counter</h2><p>Display a clicks-per-second counter.</p></div><button class="hc-switch" role="switch" aria-checked="false" aria-label="CPS Counter"></button></div>
+        <div class="hc-setting"><div><strong>Display option</strong><small>Counts input only; never clicks for you.</small></div></div>
+      </article>
+      <article class="hc-card">
+        <div class="hc-card-head"><div class="hc-symbol">✥</div><div><h2>Crosshair Style</h2><p>Choose a simple visual crosshair.</p></div><button class="hc-switch" role="switch" aria-checked="true" aria-label="Crosshair Style"></button></div>
+        <div class="hc-setting"><div><strong>Style</strong><small>Cosmetic display setting.</small></div><select class="hc-select"><option>Classic</option><option>Dot</option><option>Plus</option></select></div>
+      </article>
     </section>
-    <div class="hc-note">Press RIGHT SHIFT to close this menu. Combat automation and gameplay macros are not included.</div>
+    <div class="hc-note">Press RIGHT SHIFT to close this menu. These tools are visual and practice-only; no combat automation or gameplay macros.</div>
   </main>
 </div>
 <script>
@@ -95,6 +118,10 @@ window.addEventListener("load",function(){
   document.querySelectorAll(".hc-switch").forEach(function(button){
     button.addEventListener("click",function(){button.setAttribute("aria-checked",button.getAttribute("aria-checked")!=="true"?"true":"false");});
   });
+  var tempo=document.getElementById("tempo"),tempoValue=document.getElementById("tempo-value"),trainerButton=document.getElementById("trainer-toggle"),trainerStatus=document.getElementById("trainer-status"),beat=document.getElementById("beat-indicator"),timer=null;
+  tempo.addEventListener("input",function(){tempoValue.textContent=tempo.value+" BPS";if(timer){clearInterval(timer);startBeat();}});
+  function startBeat(){var delay=1000/Number(tempo.value);timer=setInterval(function(){beat.classList.add("pulse");beat.querySelector("b").textContent="BEAT";setTimeout(function(){beat.classList.remove("pulse");beat.querySelector("b").textContent="PRACTICE";},120);},delay);}
+  trainerButton.addEventListener("click",function(){if(timer){clearInterval(timer);timer=null;trainerButton.textContent="Start";trainerButton.classList.remove("running");trainerStatus.textContent="Paused.";beat.classList.remove("pulse");beat.querySelector("b").textContent="PAUSED";}else{trainerButton.textContent="Pause";trainerButton.classList.add("running");trainerStatus.textContent="Follow the visual beat.";beat.querySelector("b").textContent="PRACTICE";startBeat();}});
   document.querySelectorAll(".hc-nav button").forEach(function(button){
     button.addEventListener("click",function(){
       document.querySelectorAll(".hc-nav button").forEach(function(b){b.classList.remove("active");});
