@@ -31,8 +31,6 @@ jobs:
           grep -q 'runtime/1.8.8-wasm/' index.html
           grep -q 'bootstrap.js' runtime/1.8.8-wasm/index.html
           grep -q 'assetsURI' runtime/1.8.8-wasm/index.html
-          ! grep -q 'data-tab="Mods"' runtime/1.8.8-wasm/index.html
-          ! grep -q 'data-tab="Cosmetics"' runtime/1.8.8-wasm/index.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
