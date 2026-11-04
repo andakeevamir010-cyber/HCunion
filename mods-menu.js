@@ -1,158 +1,21 @@
-(() => {
-  "use strict";
-  const root = document.getElementById("hcunion-overlay-root");
-  if (!root) return;
-  const storageKey = "hcunion_mods_config";
-  const htmlUrl = new URL("../../Mods-menu.html", document.currentScript.src).href;
-  const descriptions = {
-    "ac-enabled":"Controls this setting's saved on/off state. It does not activate game automation.",
-    "ac-cps-slider":"Adjust the displayed clicks-per-second value.",
-    "ac-cps-val":"Enter a clicks-per-second value between 1 and 20.",
-    "ac-click-type":"Choose which mouse button this setting represents.",
-    "ac-burst":"Toggle the saved burst-mode preference.",
-    "ac-burst-clicks":"Set the number of clicks shown for a burst.",
-    "ac-burst-duration":"Set the displayed burst duration in milliseconds.",
-    "aim-enabled":"Controls this setting's saved on/off state; no player targeting is performed.",
-    "aim-range":"Adjust the displayed range preference in blocks.",
-    "aim-keybind":"Click to assign a key for this menu setting. Escape clears it.",
-    "aim-mode":"Choose how the preference is displayed.",
-    "aim-smoothness":"Adjust the displayed smoothness preference.",
-    "rod-enabled":"Controls this setting's saved on/off state; no item swapping is performed.",
-    "rod-keybind":"Click to assign a key for this menu setting. Escape clears it.",
-    "rod-action":"Choose the saved rod action preference.",
-    "rod-speed":"Adjust the displayed timing preference in milliseconds.",
-    "rod-sword-toggle":"Save whether the sword-after-rod preference is enabled.",
-    "rod-sword-slot":"Choose the saved hotbar slot preference.",
-    "macro-enabled":"Controls this setting's saved on/off state; no macro is executed.",
-    "macro-keybind":"Click to assign a key for this menu setting. Escape clears it.",
-    "macro-type":"Choose a macro category label; this UI does not execute actions.",
-    "macro-delay":"Adjust the displayed delay preference in milliseconds.",
-    "macro-sequence":"Store notes or a sequence draft locally. Nothing here is executed."
-  };
-
-  fetch(htmlUrl).then(r => {
-    if (!r.ok) throw new Error("Could not load the HCunion settings markup (" + r.status + ").");
-    return r.text();
-  }).then(markup => {
-    root.innerHTML = markup;
-    initialize();
-  }).catch(err => console.error("[HCunion UI]", err));
-
-  function initialize() {
-    const menu = root.querySelector(".hcunion-menu");
-    if (!menu) return;
-    root.setAttribute("aria-hidden", "true");
-    menu.setAttribute("role", "dialog");
-    menu.setAttribute("aria-label", "HCunion settings");
-    menu.querySelectorAll(".nav-item").forEach((item, index) => {
-      item.setAttribute("role", "button");
-      item.setAttribute("tabindex", "0");
-      item.setAttribute("aria-selected", item.classList.contains("active") ? "true" : "false");
-      const activate = () => {
-        menu.querySelectorAll(".nav-item").forEach(n => {
-          const active = n === item;
-          n.classList.toggle("active", active);
-          n.setAttribute("aria-selected", String(active));
-        });
-        menu.querySelectorAll(".mod-panel").forEach(p => p.classList.toggle("active", p.id === item.dataset.target));
-      };
-      item.addEventListener("click", activate);
-      item.addEventListener("keydown", e => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
-        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-          e.preventDefault();
-          const items = [...menu.querySelectorAll(".nav-item")];
-          items[(index + (e.key === "ArrowDown" ? 1 : items.length - 1)) % items.length].focus();
-        }
-      });
-    });
-
-    const tracked = [...menu.querySelectorAll("input[id],select[id],textarea[id]")];
-    const byId = id => menu.querySelector("#" + CSS.escape(id));
-    tracked.forEach(el => {
-      if (descriptions[el.id]) el.setAttribute("data-tooltip", descriptions[el.id]);
-      if (el.type === "checkbox") return;
-      const label = el.closest(".setting-row")?.querySelector(":scope > span:first-child");
-      if (label && descriptions[el.id]) label.setAttribute("data-tooltip", descriptions[el.id]);
-    });
-
-    const sliders = [
-      ["aim-range","aim-range-val"],["aim-smoothness","aim-smoothness-val"],
-      ["rod-speed","rod-speed-val"],["macro-delay","macro-delay-val"]
-    ];
-    function syncDisplays() {
-      sliders.forEach(([sid,did]) => { const s=byId(sid),d=byId(did); if(s&&d)d.textContent=s.value; });
-      const range=byId("ac-cps-slider"), number=byId("ac-cps-val");
-      if(range&&number) number.value=range.value;
-    }
-    function save() {
-      const config = {};
-      tracked.forEach(el => config[el.id] = el.type === "checkbox" ? el.checked : el.value);
-      try { localStorage.setItem(storageKey, JSON.stringify(config)); }
-      catch (e) { console.warn("[HCunion UI] Settings could not be saved.", e); }
-    }
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
-      tracked.forEach(el => {
-        if (!(el.id in saved)) return;
-        if (el.type === "checkbox") el.checked = Boolean(saved[el.id]);
-        else if (el.type === "range" || el.type === "number") {
-          const value = Number(saved[el.id]);
-          if (Number.isFinite(value)) el.value = String(Math.min(Number(el.max || Infinity), Math.max(Number(el.min || -Infinity), value)));
-        } else el.value = String(saved[el.id]);
-      });
-    } catch (e) { console.warn("[HCunion UI] Saved settings were invalid.", e); }
-    syncDisplays();
-
-    byId("ac-cps-slider")?.addEventListener("input", () => { syncDisplays(); save(); });
-    byId("ac-cps-val")?.addEventListener("input", e => {
-      const n=Number(e.target.value);
-      if(Number.isFinite(n)) byId("ac-cps-slider").value=String(Math.min(20,Math.max(1,n)));
-      syncDisplays(); save();
-    });
-    sliders.forEach(([sid]) => byId(sid)?.addEventListener("input", () => { syncDisplays(); save(); }));
-    tracked.forEach(el => {
-      if (el.id === "ac-cps-slider" || el.id === "ac-cps-val" || sliders.some(x=>x[0]===el.id)) return;
-      el.addEventListener("change", save);
-      if (el.tagName === "TEXTAREA") el.addEventListener("input", save);
-    });
-
-    let recording = null;
-    menu.querySelectorAll(".keybind-field").forEach(field => field.addEventListener("click", () => {
-      if (recording) { recording.classList.remove("recording"); recording.value = recording.dataset.previous || "NONE"; }
-      recording = field;
-      field.dataset.previous = field.value;
-      field.value = "PRESS A KEY";
-      field.classList.add("recording");
-    }));
-
-    function setOpen(open) {
-      root.classList.toggle("is-open", open);
-      root.setAttribute("aria-hidden", String(!open));
-      if (open) menu.querySelector(".nav-item.active")?.focus();
-    }
-    window.addEventListener("keydown", e => {
-      if (recording) {
-        if (e.code === "Escape") {
-          e.preventDefault(); recording.value = "NONE"; recording.classList.remove("recording"); recording = null; save(); return;
-        }
-        if (e.code === "ShiftRight") return;
-        e.preventDefault();
-        recording.value = e.code === "Space" ? "SPACE" : e.key.toUpperCase();
-        recording.classList.remove("recording"); recording = null; save(); return;
-      }
-      if (e.code === "ShiftRight" && !e.repeat) {
-        e.preventDefault(); e.stopPropagation();
-        setOpen(!root.classList.contains("is-open"));
-      }
-      if (root.classList.contains("is-open") && e.code === "Escape") {
-        e.preventDefault(); setOpen(false);
-      }
-    }, true);
-    root.addEventListener("mousedown", e => { if (e.target === root) setOpen(false); });
-    root.addEventListener("click", e => {
-      const target=e.target.closest("input,select,textarea,button,.nav-item");
-      if(target) e.stopPropagation();
-    });
-  }
+(()=>{"use strict";
+const root=document.getElementById("hcunion-overlay-root");if(!root)return;
+const key="hcunion_mods_config";let ready=false,opened=false,recording=null;
+function toggle(v){opened=v;root.classList.toggle("is-open",v&&ready);root.setAttribute("aria-hidden",String(!(v&&ready)));const b=document.getElementById("hcunion-menu-launcher");if(b)b.setAttribute("aria-expanded",String(v));if(v&&ready)root.querySelector(".nav-item.active")?.focus();}
+window.addEventListener("keydown",e=>{if(recording){if(e.code==="Escape"){e.preventDefault();recording.value="NONE";recording.classList.remove("recording");recording=null;save();return;}if(e.code!=="ShiftRight"){e.preventDefault();recording.value=e.code==="Space"?"SPACE":e.key.toUpperCase();recording.classList.remove("recording");recording=null;save();return;}}if(e.code==="ShiftRight"&&!e.repeat){e.preventDefault();e.stopPropagation();toggle(!opened);}else if(e.code==="Escape"&&opened){e.preventDefault();toggle(false);}},true);
+const b=document.createElement("button");b.id="hcunion-menu-launcher";b.type="button";b.textContent="HCunion Menu · Right Shift";b.setAttribute("aria-label","Open HCunion settings");b.setAttribute("aria-expanded","false");Object.assign(b.style,{position:"fixed",zIndex:"10001",right:"14px",bottom:"14px",padding:"11px 15px",border:"1px solid #7650a5",borderRadius:"10px",background:"linear-gradient(135deg,#28183e,#120d1c)",color:"#f4eaff",font:"600 12px system-ui,sans-serif",boxShadow:"0 5px 24px #0009",cursor:"pointer"});b.addEventListener("click",()=>toggle(!opened));document.body.appendChild(b);
+const descriptions={"ac-enabled":"Saved UI toggle only; does not activate gameplay automation.","ac-cps-slider":"Adjust displayed clicks per second.","ac-cps-val":"Enter a value from 1 to 20.","ac-click-type":"Choose the displayed mouse button.","ac-burst":"Toggle the saved burst preference.","ac-burst-clicks":"Set the displayed burst click count.","ac-burst-duration":"Set displayed burst duration.","aim-enabled":"Saved UI toggle only; no player targeting is performed.","aim-range":"Adjust the displayed range preference.","aim-keybind":"Click to record a key for this setting; Escape clears it.","aim-mode":"Choose the display mode.","aim-smoothness":"Adjust the displayed smoothness preference.","rod-enabled":"Saved UI toggle only; no item swapping is performed.","rod-keybind":"Click to record a key for this setting.","rod-action":"Choose the saved action preference.","rod-speed":"Adjust displayed timing.","rod-sword-toggle":"Save the sword-after-rod preference.","rod-sword-slot":"Choose a saved hotbar slot.","macro-enabled":"Saved UI toggle only; no macro is executed.","macro-keybind":"Click to record a key for this setting.","macro-type":"Choose a macro category label.","macro-delay":"Adjust displayed delay.","macro-sequence":"Save notes locally; nothing is executed."};
+fetch(new URL("./Mods-menu.html",document.currentScript.src)).then(r=>{if(!r.ok)throw Error("Mods-menu.html returned "+r.status);return r.text();}).then(html=>{root.innerHTML=html;init();ready=true;toggle(opened);}).catch(err=>{console.error("[HCunion]",err);b.textContent="Menu unavailable — check Mods-menu.html";});
+function init(){const menu=root.querySelector(".hcunion-menu");if(!menu)return;menu.setAttribute("role","dialog");menu.setAttribute("aria-label","HCunion settings");
+menu.querySelectorAll(".nav-item").forEach((item,i)=>{item.tabIndex=0;item.setAttribute("role","button");const activate=()=>{menu.querySelectorAll(".nav-item").forEach(n=>{n.classList.toggle("active",n===item);n.setAttribute("aria-selected",String(n===item));});menu.querySelectorAll(".mod-panel").forEach(p=>p.classList.toggle("active",p.id===item.dataset.target));};item.addEventListener("click",activate);item.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate();}if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();const a=[...menu.querySelectorAll(".nav-item")];a[(i+(e.key==="ArrowDown"?1:a.length-1))%a.length].focus();}});});
+const fields=[...menu.querySelectorAll("input[id],select[id],textarea[id]")],get=id=>menu.querySelector("#"+CSS.escape(id));
+fields.forEach(el=>{if(descriptions[el.id]){el.dataset.tooltip=descriptions[el.id];const label=el.closest(".setting-row")?.querySelector(":scope > span:first-child");if(label)label.dataset.tooltip=descriptions[el.id];}});
+function save(){const data={};fields.forEach(el=>data[el.id]=el.type==="checkbox"?el.checked:el.value);try{localStorage.setItem(key,JSON.stringify(data));}catch(e){console.warn("HCunion settings not saved",e);}}
+try{const data=JSON.parse(localStorage.getItem(key)||"{}");fields.forEach(el=>{if(!(el.id in data))return;if(el.type==="checkbox")el.checked=!!data[el.id];else el.value=String(data[el.id]);});}catch(e){console.warn("Invalid saved settings",e);}
+const pairs=[["aim-range","aim-range-val"],["aim-smoothness","aim-smoothness-val"],["rod-speed","rod-speed-val"],["macro-delay","macro-delay-val"]];
+function sync(){pairs.forEach(([a,c])=>{if(get(a)&&get(c))get(c).textContent=get(a).value;});if(get("ac-cps-slider")&&get("ac-cps-val"))get("ac-cps-val").value=get("ac-cps-slider").value;}
+sync();fields.forEach(el=>{el.addEventListener("change",save);el.addEventListener("input",()=>{if(el.id==="ac-cps-val"&&get("ac-cps-slider"))get("ac-cps-slider").value=String(Math.min(20,Math.max(1,Number(el.value)||1)));sync();save();});});
+menu.querySelectorAll(".keybind-field").forEach(el=>el.addEventListener("click",()=>{if(recording){recording.classList.remove("recording");recording.value="NONE";}recording=el;el.value="PRESS A KEY";el.classList.add("recording");}));
+root.addEventListener("mousedown",e=>{if(e.target===root)toggle(false);});
+}
 })();
