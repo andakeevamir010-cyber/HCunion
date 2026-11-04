@@ -1,5 +1,4 @@
 <div class="hcunion-menu" id="hcunionMenu">
-    <!-- Sidebar Navigation -->
     <div class="sidebar">
         <div class="brand">HCunion</div>
         <ul class="nav-links">
@@ -9,171 +8,62 @@
             <li class="nav-item" data-target="panel-macro">⌨️ Macro</li>
         </ul>
     </div>
-
-    <!-- Main Content Area -->
     <div class="content-area">
-        <!-- 1. Auto Clicker -->
         <div class="mod-panel active" id="panel-autoclicker">
             <h2>Auto Clicker Settings</h2>
             <div class="setting-card">
-                <div class="setting-row">
-                    <span>Enable Module</span>
-                    <label class="switch">
-                        <input type="checkbox" id="ac-enabled">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="setting-row">
-                    <span>Clicks Per Second (CPS)</span>
-                    <div class="input-group">
-                        <input type="range" id="ac-cps-slider" min="1" max="20" value="10">
-                        <input type="number" id="ac-cps-val" min="1" max="20" value="10">
-                    </div>
-                </div>
-                <div class="setting-row">
-                    <span>Click Type</span>
-                    <select id="ac-click-type">
-                        <option value="left">Left Click</option>
-                        <option value="right">Right Click</option>
-                    </select>
-                </div>
-                <div class="setting-row">
-                    <span>Burst Mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="ac-burst">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="setting-row">
-                    <span>Clicks Per Burst</span>
-                    <input type="number" id="ac-burst-clicks" min="1" max="5" value="3">
-                </div>
-                <div class="setting-row">
-                    <span>Burst Duration (ms)</span>
-                    <input type="number" id="ac-burst-duration" min="50" max="500" step="10" value="100">
-                </div>
+                <div class="setting-row"><span>Enable Module</span><label class="switch"><input type="checkbox" id="ac-enabled"><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span>Clicks Per Second (CPS)</span><div class="input-group"><input type="range" id="ac-cps-slider" min="1" max="20" value="10"><input type="number" id="ac-cps-val" min="1" max="20" value="10"></div></div>
+                <div class="setting-row"><span>Click Type</span><select id="ac-click-type"><option value="left">Left Click</option><option value="right">Right Click</option></select></div>
+                <div class="setting-row"><span>Burst Mode</span><label class="switch"><input type="checkbox" id="ac-burst"><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span>Clicks Per Burst</span><input type="number" id="ac-burst-clicks" min="1" max="5" value="3"></div>
+                <div class="setting-row"><span>Burst Duration (ms)</span><input type="number" id="ac-burst-duration" min="50" max="500" step="10" value="100"></div>
             </div>
         </div>
-
-        <!-- 2. Aim Assist -->
         <div class="mod-panel" id="panel-aimassist">
             <h2>Aim Assist Settings</h2>
             <div class="setting-card">
-                <div class="setting-row">
-                    <span>Enable Module</span>
-                    <label class="switch">
-                        <input type="checkbox" id="aim-enabled">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="setting-row">
-                    <span>Range (Blocks)</span>
-                    <div class="input-group">
-                        <input type="range" id="aim-range" min="1.0" max="6.0" step="0.1" value="3.5">
-                        <span class="value-display" id="aim-range-val">3.5</span>
-                    </div>
-                </div>
-                <div class="setting-row">
-                    <span>Lock Keybind</span>
-                    <input type="text" class="keybind-field" id="aim-keybind" value="NONE" readonly>
-                </div>
-                <div class="setting-row">
-                    <span>Lock Mode</span>
-                    <select id="aim-mode">
-                        <option value="crosshair">Closest to Crosshair</option>
-                        <option value="distance">Closest Distance</option>
-                    </select>
-                </div>
-                <div class="setting-row">
-                    <span>Smoothness</span>
-                    <div class="input-group">
-                        <input type="range" id="aim-smoothness" min="1" max="10" value="5">
-                        <span class="value-display" id="aim-smoothness-val">5</span>
-                    </div>
-                </div>
+                <div class="setting-row"><span>Enable Module</span><label class="switch"><input type="checkbox" id="aim-enabled"><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span>Range (Blocks)</span><div class="input-group"><input type="range" id="aim-range" min="1.0" max="6.0" step="0.1" value="3.5"><span class="value-display" id="aim-range-val">3.5</span></div></div>
+                <div class="setting-row"><span>Lock Keybind</span><input type="text" class="keybind-field" id="aim-keybind" value="NONE" readonly></div>
+                <div class="setting-row"><span>Lock Mode</span><select id="aim-mode"><option value="crosshair">Closest to Crosshair</option><option value="distance">Closest Distance</option></select></div>
+                <div class="setting-row"><span>Smoothness</span><div class="input-group"><input type="range" id="aim-smoothness" min="1" max="10" value="5"><span class="value-display" id="aim-smoothness-val">5</span></div></div>
             </div>
         </div>
-
-        <!-- 3. Auto Rod -->
         <div class="mod-panel" id="panel-autorod">
             <h2>Auto Rod Settings</h2>
             <div class="setting-card">
-                <div class="setting-row">
-                    <span>Enable Module</span>
-                    <label class="switch">
-                        <input type="checkbox" id="rod-enabled">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="setting-row">
-                    <span>Rod Keybind</span>
-                    <input type="text" class="keybind-field" id="rod-keybind" value="NONE" readonly>
-                </div>
-                <div class="setting-row">
-                    <span>Rod Action</span>
-                    <select id="rod-action">
-                        <option value="switch-cast">Switch & Cast</option>
-                        <option value="cast-only">Cast Only</option>
-                    </select>
-                </div>
-                <div class="setting-row">
-                    <span>Swap Speed (ms)</span>
-                    <div class="input-group">
-                        <input type="range" id="rod-speed" min="50" max="500" step="10" value="150">
-                        <span class="value-display" id="rod-speed-val">150</span>
-                    </div>
-                </div>
-                <div class="setting-row">
-                    <span>Use Sword After Rod</span>
-                    <label class="switch">
-                        <input type="checkbox" id="rod-sword-toggle">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="setting-row">
-                    <span>Sword Hotbar Slot</span>
-                    <select id="rod-sword-slot">
-                        <option value="1">Slot 1</option>
-                        <option value="2">Slot 2</option>
-                        <option value="3">Slot 3</option>
-                    </select>
-                </div>
+                <div class="setting-row"><span>Enable Module</span><label class="switch"><input type="checkbox" id="rod-enabled"><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span>Rod Keybind</span><input type="text" class="keybind-field" id="rod-keybind" value="NONE" readonly></div>
+                <div class="setting-row"><span>Rod Action</span><select id="rod-action"><option value="switch-cast">Switch &amp; Cast</option><option value="cast-only">Cast Only</option></select></div>
+                <div class="setting-row"><span>Swap Speed (ms)</span><div class="input-group"><input type="range" id="rod-speed" min="50" max="500" step="10" value="150"><span class="value-display" id="rod-speed-val">150</span></div></div>
+                <div class="setting-row"><span>Use Sword After Rod</span><label class="switch"><input type="checkbox" id="rod-sword-toggle"><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span>Sword Hotbar Slot</span><select id="rod-sword-slot"><option value="1">Slot 1</option><option value="2">Slot 2</option><option value="3">Slot 3</option></select></div>
             </div>
         </div>
-
-        <!-- 4. Macro -->
         <div class="mod-panel" id="panel-macro">
-            <h2>Macro Settings</h2>
+            <h2>Macro — Menu Configuration</h2>
+            <p class="panel-description">Customize how the Macro page looks and how its preferences are stored. These are interface settings only; no actions or gameplay sequences are executed.</p>
             <div class="setting-card">
-                <div class="setting-row">
-                    <span>Enable Module</span>
-                    <label class="switch">
-                        <input type="checkbox" id="macro-enabled">
-                        <span class="slider-round"></span>
-                    </label>
+                <div class="setting-row"><span data-tooltip="Turn this page's saved UI preference on or off.">Show Macro Page</span><label class="switch"><input type="checkbox" id="macro-enabled"><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span data-tooltip="A label shown in this menu; it does not trigger anything.">Display Name</span><input type="text" id="macro-display-name" maxlength="24" value="My Macro"></div>
+                <div class="setting-row"><span data-tooltip="Choose a saved organization preset for your settings page.">Menu Preset</span><select id="macro-profile"><option value="default">Default</option><option value="minimal">Minimal</option><option value="tournament">Tournament</option><option value="streamer">Streamer</option></select></div>
+                <div class="setting-row"><span data-tooltip="Pick a color accent for the Macro page preview.">Accent Color</span><select id="macro-accent"><option value="purple">Purple</option><option value="blue">Blue</option><option value="cyan">Cyan</option><option value="pink">Pink</option></select></div>
+                <div class="setting-row"><span data-tooltip="Choose where the menu preview button is positioned.">Menu Button Position</span><select id="macro-position"><option value="bottom-right">Bottom Right</option><option value="bottom-left">Bottom Left</option><option value="top-right">Top Right</option><option value="top-left">Top Left</option></select></div>
+                <div class="setting-row"><span data-tooltip="Show or hide help descriptions on this page.">Show Tooltips</span><label class="switch"><input type="checkbox" id="macro-tooltips" checked><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span data-tooltip="Use a denser layout preference for the settings page.">Compact Layout</span><label class="switch"><input type="checkbox" id="macro-compact"><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span data-tooltip="Show a small status label in the Macro panel.">Show Status Label</span><label class="switch"><input type="checkbox" id="macro-status" checked><span class="slider-round"></span></label></div>
+                <div class="setting-row"><span data-tooltip="Select a key label to display beside this page. It is not an active game hotkey.">Display Key Label</span><input type="text" class="keybind-field" id="macro-keybind" value="NONE" readonly></div>
+                <div class="setting-row"><span data-tooltip="Select a category label for organizing this page.">Category Label</span><select id="macro-category"><option value="utility">Utility</option><option value="practice">Practice</option><option value="visual">Visual</option><option value="custom">Custom</option></select></div>
+                <div class="setting-row"><span data-tooltip="Set a delay label for display only; it does not time or run actions.">Display Delay (ms)</span><div class="input-group"><input type="range" id="macro-delay" min="0" max="1000" step="25" value="100"><span class="value-display" id="macro-delay-val">100</span></div></div>
+                <div class="setting-row flex-column"><span data-tooltip="Keep personal notes about this configuration. Notes are saved in this browser only.">Configuration Notes</span><textarea id="macro-notes" maxlength="1000" placeholder="Write notes about this menu setup..."></textarea></div>
+                <div class="macro-actions">
+                    <button type="button" id="macro-export">Export Settings</button>
+                    <button type="button" id="macro-import-trigger">Import Settings</button>
+                    <button type="button" id="macro-reset" class="subtle-button">Reset Macro Page</button>
+                    <input type="file" id="macro-import-file" accept="application/json,.json" hidden>
                 </div>
-                <div class="setting-row">
-                    <span>Macro Keybind</span>
-                    <input type="text" class="keybind-field" id="macro-keybind" value="NONE" readonly>
-                </div>
-                <div class="setting-row">
-                    <span>Macro Type</span>
-                    <select id="macro-type">
-                        <option value="chat">Chat Command</option>
-                        <option value="inventory">Inventory Layout Swap</option>
-                    </select>
-                </div>
-                <div class="setting-row">
-                    <span>Delay between actions (ms)</span>
-                    <div class="input-group">
-                        <input type="range" id="macro-delay" min="10" max="1000" step="10" value="50">
-                        <span class="value-display" id="macro-delay-val">50</span>
-                    </div>
-                </div>
-                <div class="setting-row flex-column">
-                    <span>Actions Sequence Editor</span>
-                    <textarea id="macro-sequence" placeholder="Enter commands or actions sequentially..."></textarea>
-                </div>
+                <p class="macro-save-status" id="macro-save-status" role="status" aria-live="polite">Settings save automatically in this browser.</p>
             </div>
         </div>
     </div>
