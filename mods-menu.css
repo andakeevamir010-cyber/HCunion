@@ -45,3 +45,14 @@
 @media(max-width:620px){#hcunion-overlay-root{padding:8px}.hcunion-menu{width:100%;height:min(620px,94dvh);min-height:0;border-radius:12px}.hcunion-menu .sidebar{flex-basis:clamp(112px,31%,155px)}.hcunion-menu .brand{padding:18px 12px;font-size:15px;letter-spacing:.1em}.hcunion-menu .nav-links{padding:10px 6px}.hcunion-menu .nav-item{padding:10px 8px;font-size:11px;gap:6px}.hcunion-menu .content-area{padding:18px 13px}.hcunion-menu .setting-card{padding:6px 12px}.hcunion-menu .setting-row{gap:10px;font-size:12px}.hcunion-menu .input-group{min-width:0;gap:7px}.hcunion-menu select{min-width:105px;width:120px}.hcunion-menu input[type=range]{width:clamp(72px,20vw,130px)}}
 @media(max-width:390px){.hcunion-menu .sidebar{flex-basis:104px}.hcunion-menu .nav-item{font-size:10px}.hcunion-menu .setting-row{align-items:flex-start;flex-direction:column;gap:8px}.hcunion-menu .setting-row .input-group,.hcunion-menu .setting-row select,.hcunion-menu .setting-row input[type=number],.hcunion-menu .setting-row .keybind-field{align-self:flex-end}}
 @media(prefers-reduced-motion:reduce){.hcunion-menu *,.hcunion-menu *:before,.hcunion-menu *:after{animation:none!important;transition:none!important}}
+
+/* Macro page configuration controls */
+.hcunion-menu .panel-description{margin:-10px 0 18px;color:#a99dbb;font-size:12px;line-height:1.6;max-width:620px}
+.hcunion-menu .macro-actions{display:flex;flex-wrap:wrap;gap:9px;padding:16px 0 6px}
+.hcunion-menu .macro-actions button{border:1px solid #7650a5;border-radius:8px;padding:9px 12px;background:linear-gradient(135deg,#7040bd,#392052);color:#fff;font:650 12px system-ui,sans-serif;cursor:pointer}
+.hcunion-menu .macro-actions button:hover{filter:brightness(1.15)}
+.hcunion-menu .macro-actions .subtle-button{background:#17111f;border-color:#443451;color:#d9cce9}
+.hcunion-menu .macro-save-status{margin:8px 0 5px;color:#bda5df;font-size:11px;line-height:1.5}
+.hcunion-menu.tooltips-hidden [data-tooltip]:after{display:none}
+.hcunion-menu.compact-layout .setting-row{min-height:42px;padding:7px 0}
+.hcunion-menu #macro-display-name{width:min(190px,55%);min-width:110px}
