@@ -25,10 +25,12 @@ import net.minecraft.util.Vec3;
  *  I (default) ........ looking at a player: lock onto them, Aim Assist + Auto Clicker turn ON
  *                       pressing I again (looking at them or not): release, both turn OFF
  *
- * Hooks needed (see instructions):
- *   Minecraft.runGameLoop()                 -> HCUnion.onFrame(this);
- *   Minecraft.clickMouse()                  -> make it public
- *   GuiIngame.renderGameOverlay (optional)  -> HCUnion.renderHud(this.mc);
+ * Integration requirements:
+ *   1. Call HCUnion.onFrame(this) once per client frame from Minecraft.runGameLoop().
+ *   2. Expose Minecraft.clickMouse() to this package (or add a package-safe attack bridge).
+ *   3. Optionally call HCUnion.renderHud(this.mc) from GuiIngame.renderGameOverlay().
+ *
+ * This class is source code only; it is not loaded by the browser wrapper automatically.
  */
 public class HCUnion {
 
@@ -115,7 +117,7 @@ public class HCUnion {
             release();           // locked -> any press lets go
             return;
         }
-        EntityPlayer p = lookingAt(mc, Math.max(aim.range.v, 3.0));
+        EntityPlayer p = lookingAt(mc, aim.range.v);
         if (p != null) {
             lockTarget = p;
             aim.enabled = true;
@@ -248,6 +250,7 @@ public class HCUnion {
                     return null;
                 }
                 if (me.getDistanceToEntity(lockTarget) > range.v) return null;
+                if (ignoreInv.v && lockTarget.isInvisible()) return null;
                 if (visible.v && !me.canEntityBeSeen(lockTarget)) return null;
                 return lockTarget;
             }
@@ -343,7 +346,8 @@ public class HCUnion {
             if (!enabled) { next = 0; return; }
             if (swordOnly.v && !holdingSword(mc)) { next = 0; return; }
             if (needHold.v && !mc.gameSettings.keyBindAttack.isKeyDown()) { next = 0; return; }
-            if (onTarget.v && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) return;
+            if (onTarget.v && (mc.objectMouseOver == null
+                    || !(mc.objectMouseOver.entityHit instanceof EntityPlayer))) return;
 
             long now = System.currentTimeMillis();
             if (next == 0) next = now;
@@ -401,50 +405,77 @@ public class HCUnion {
     // ------------------------------------------------------------------ menu (Right Shift)
 
     public static class ClickGui extends GuiScreen {
-        private static final int W = 150, ROW = 12, HEAD = 16, TOP = 20;
+        private static final int W = 140, ROW = 12, HEAD = 16, TOP = 12, GAP = 8;
         private final long opened = System.currentTimeMillis();
         private Setting listening = null;
         private Num dragging = null;
         private int dragX = 0;
 
-        private int colX(int i) { return 20 + i * (W + 10); }
+        // Settings flow into extra columns when a module is taller than the screen,
+        // so nothing runs off the bottom on small screens.
+        private int rowsPerCol() {
+            return Math.max(4, (this.height - TOP - HEAD - 16) / ROW);
+        }
+
+        private int subCols(Module m) {
+            int r = rowsPerCol();
+            return Math.max(1, (m.settings.size() + r - 1) / r);
+        }
+
+        private int modX(int mi) {
+            int x = 8;
+            for (int i = 0; i < mi; i++) {
+                x += subCols(MODULES.get(i)) * (W + GAP);
+            }
+            return x;
+        }
+
+        private int setX(int mi, int j) {
+            return modX(mi) + (j / rowsPerCol()) * (W + GAP);
+        }
+
+        private int setY(int j) {
+            return TOP + HEAD + (j % rowsPerCol()) * ROW;
+        }
 
         @Override
         public void drawScreen(int mouseX, int mouseY, float partialTicks) {
             drawRect(0, 0, this.width, this.height, 0x66000000);
             for (int i = 0; i < MODULES.size(); i++) {
                 Module m = MODULES.get(i);
-                int x = colX(i);
-                int y = TOP;
-                drawRect(x, y, x + W, y + HEAD, m.enabled ? 0xFF2E7D32 : 0xFF3A3A3A);
-                this.fontRendererObj.drawStringWithShadow(m.name + (m.enabled ? "  [ON]" : "  [OFF]"), x + 4, y + 4, 0xFFFFFF);
-                y += HEAD;
-                for (Setting s : m.settings) {
-                    drawRect(x, y, x + W, y + ROW, 0xDD121212);
-                    if (s instanceof Bool) {
-                        Bool b = (Bool) s;
-                        this.fontRendererObj.drawStringWithShadow(b.name, x + 4, y + 2, 0xDDDDDD);
-                        String t = b.v ? "ON" : "OFF";
-                        this.fontRendererObj.drawStringWithShadow(t, x + W - 4 - this.fontRendererObj.getStringWidth(t), y + 2, b.v ? 0x55FF55 : 0xFF5555);
-                    } else if (s instanceof Num) {
-                        Num n = (Num) s;
-                        int fill = (int) ((n.v - n.min) / (n.max - n.min) * W);
-                        drawRect(x, y, x + fill, y + ROW, 0xAA2E7D32);
-                        this.fontRendererObj.drawStringWithShadow(n.name, x + 4, y + 2, 0xFFFFFF);
-                        String t = n.display();
-                        this.fontRendererObj.drawStringWithShadow(t, x + W - 4 - this.fontRendererObj.getStringWidth(t), y + 2, 0xFFFFFF);
-                    } else if (s instanceof Key) {
-                        Key k = (Key) s;
-                        this.fontRendererObj.drawStringWithShadow(k.name, x + 4, y + 2, 0xDDDDDD);
-                        String t = (listening == k) ? "press a key..." : k.display();
-                        this.fontRendererObj.drawStringWithShadow(t, x + W - 4 - this.fontRendererObj.getStringWidth(t), y + 2, 0xFFFF55);
-                    }
-                    y += ROW;
+                int x0 = modX(i);
+                int hw = subCols(m) * (W + GAP) - GAP;
+                drawRect(x0, TOP, x0 + hw, TOP + HEAD, m.enabled ? 0xFF2E7D32 : 0xFF3A3A3A);
+                this.fontRendererObj.drawStringWithShadow(m.name + (m.enabled ? "  [ON]" : "  [OFF]"), x0 + 4, TOP + 4, 0xFFFFFF);
+                for (int j = 0; j < m.settings.size(); j++) {
+                    drawRow(m.settings.get(j), setX(i, j), setY(j));
                 }
             }
             this.fontRendererObj.drawStringWithShadow(
-                    "Click a title to toggle | drag sliders | click a keybind then press a key (Esc = none) | Right Shift / Esc closes",
-                    8, this.height - 12, 0xAAAAAA);
+                    "Click title = toggle | drag sliders | click keybind then press a key (Esc = none) | Right Shift / Esc = close",
+                    8, this.height - 10, 0xAAAAAA);
+        }
+
+        private void drawRow(Setting s, int x, int y) {
+            drawRect(x, y, x + W, y + ROW, 0xDD121212);
+            if (s instanceof Bool) {
+                Bool b = (Bool) s;
+                this.fontRendererObj.drawStringWithShadow(b.name, x + 4, y + 2, 0xDDDDDD);
+                String t = b.v ? "ON" : "OFF";
+                this.fontRendererObj.drawStringWithShadow(t, x + W - 4 - this.fontRendererObj.getStringWidth(t), y + 2, b.v ? 0x55FF55 : 0xFF5555);
+            } else if (s instanceof Num) {
+                Num n = (Num) s;
+                int fill = (int) ((n.v - n.min) / (n.max - n.min) * W);
+                drawRect(x, y, x + fill, y + ROW, 0xAA2E7D32);
+                this.fontRendererObj.drawStringWithShadow(n.name, x + 4, y + 2, 0xFFFFFF);
+                String t = n.display();
+                this.fontRendererObj.drawStringWithShadow(t, x + W - 4 - this.fontRendererObj.getStringWidth(t), y + 2, 0xFFFFFF);
+            } else if (s instanceof Key) {
+                Key k = (Key) s;
+                this.fontRendererObj.drawStringWithShadow(k.name, x + 4, y + 2, 0xDDDDDD);
+                String t = (listening == k) ? "press a key..." : k.display();
+                this.fontRendererObj.drawStringWithShadow(t, x + W - 4 - this.fontRendererObj.getStringWidth(t), y + 2, 0xFFFF55);
+            }
         }
 
         @Override
@@ -452,16 +483,18 @@ public class HCUnion {
             if (button != 0) return;
             for (int i = 0; i < MODULES.size(); i++) {
                 Module m = MODULES.get(i);
-                int x = colX(i);
-                int y = TOP;
-                if (mouseX >= x && mouseX <= x + W && mouseY >= y && mouseY < y + HEAD) {
+                int x0 = modX(i);
+                int hw = subCols(m) * (W + GAP) - GAP;
+                if (mouseX >= x0 && mouseX <= x0 + hw && mouseY >= TOP && mouseY < TOP + HEAD) {
                     m.enabled = !m.enabled;
                     if (m == aim && !m.enabled) lockTarget = null;
                     return;
                 }
-                y += HEAD;
-                for (Setting s : m.settings) {
+                for (int j = 0; j < m.settings.size(); j++) {
+                    int x = setX(i, j);
+                    int y = setY(j);
                     if (mouseX >= x && mouseX <= x + W && mouseY >= y && mouseY < y + ROW) {
+                        Setting s = m.settings.get(j);
                         if (s instanceof Bool) {
                             ((Bool) s).v = !((Bool) s).v;
                         } else if (s instanceof Num) {
@@ -473,7 +506,6 @@ public class HCUnion {
                         }
                         return;
                     }
-                    y += ROW;
                 }
             }
         }
