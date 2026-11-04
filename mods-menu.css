@@ -1,239 +1,47 @@
-:root {
-    --bg-darker: #0c0b0e;
-    --bg-card: #141218;
-    --bg-sidebar: #100e13;
-    --accent-purple: #8a2be2;
-    --accent-purple-hover: #9d4edd;
-    --text-main: #f3f0f7;
-    --text-muted: #a49cb0;
-    --border-color: #25212e;
-}
-
-.hcunion-menu {
-    display: flex;
-    width: 800px;
-    height: 500px;
-    background-color: var(--bg-darker);
-    color: var(--text-main);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-}
-
-/* Sidebar Styling */
-.sidebar {
-    width: 220px;
-    background-color: var(--bg-sidebar);
-    border-right: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-}
-
-.brand {
-    padding: 24px;
-    font-size: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--accent-purple);
-    text-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
-}
-
-.nav-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.nav-item {
-    padding: 14px 24px;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.2s ease;
-    font-size: 14px;
-    border-left: 3px solid transparent;
-}
-
-.nav-item:hover, .nav-item.active {
-    color: var(--text-main);
-    background-color: rgba(138, 43, 226, 0.08);
-    border-left-color: var(--accent-purple);
-}
-
-/* Content Panels */
-.content-area {
-    flex: 1;
-    padding: 30px;
-    overflow-y: auto;
-    background-color: var(--bg-darker);
-}
-
-.mod-panel {
-    display: none;
-}
-
-.mod-panel.active {
-    display: block;
-}
-
-.mod-panel h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 22px;
-    font-weight: 600;
-}
-
-.setting-card {
-    background-color: var(--bg-card);
-    border-radius: 8px;
-    padding: 20px;
-    border: 1px solid var(--border-color);
-}
-
-.setting-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.setting-row:last-child {
-    border-bottom: none;
-}
-
-.setting-row.flex-column {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-/* Control Elements */
-.input-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.value-display {
-    min-width: 32px;
-    text-align: right;
-    color: var(--accent-purple);
-    font-weight: bold;
-}
-
-input[type="number"], select, textarea, .keybind-field {
-    background-color: #1a1721;
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    padding: 6px 10px;
-    border-radius: 4px;
-    outline: none;
-    font-size: 13px;
-}
-
-input[type="number"] {
-    width: 60px;
-}
-
-select {
-    cursor: pointer;
-    min-width: 140px;
-}
-
-textarea {
-    width: 100%;
-    height: 80px;
-    resize: none;
-    box-sizing: border-box;
-}
-
-/* Custom Keybind Field */
-.keybind-field {
-    text-align: center;
-    cursor: pointer;
-    width: 100px;
-    text-transform: uppercase;
-    font-weight: 600;
-    background-color: #211c2b;
-    border-color: var(--accent-purple);
-}
-
-.keybind-field.recording {
-    background-color: var(--accent-purple);
-    color: #fff;
-    animation: pulse 1.5s infinite;
-}
-
-/* Range Sliders */
-input[type="range"] {
-    -webkit-appearance: none;
-    width: 150px;
-    background: #25212e;
-    height: 6px;
-    border-radius: 3px;
-    outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--accent-purple);
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-    background: var(--accent-purple-hover);
-}
-
-/* Custom Switches */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 42px;
-    height: 22px;
-}
-
-.switch input { display: none; }
-
-.slider-round {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #25212e;
-    transition: .3s;
-    border-radius: 34px;
-}
-
-.slider-round:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 4px;
-    bottom: 4px;
-    background-color: var(--text-muted);
-    transition: .3s;
-    border-radius: 50%;
-}
-
-input:checked + .slider-round {
-    background-color: var(--accent-purple);
-}
-
-input:checked + .slider-round:before {
-    transform: translateX(20px);
-    background-color: #fff;
-}
-
-@keyframes pulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
-}
+/* HCunion overlay — isolated styles so the game shell is untouched */
+#hcunion-overlay-root{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:clamp(10px,3vw,32px);background:rgba(3,2,8,.48);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#f4f0ff}
+#hcunion-overlay-root.is-open{display:flex}
+#hcunion-overlay-root *{box-sizing:border-box}
+.hcunion-menu{--hc-bg:#0c0912;--hc-side:#100c18;--hc-card:#15101e;--hc-line:#2a2038;--hc-purple:#9a63ff;--hc-purple2:#713ce0;--hc-text:#f4f0ff;--hc-muted:#a99dbb;display:flex;width:min(900px,94vw);height:min(590px,88vh);min-height:360px;max-height:calc(100dvh - 24px);background:linear-gradient(145deg,#120d1c,#0b0810 68%);color:var(--hc-text);border:1px solid #38264f;border-radius:16px;overflow:hidden;box-shadow:0 24px 90px #000b,0 0 0 1px #a56aff12,0 0 48px #713ce02b}
+.hcunion-menu .sidebar{flex:0 0 clamp(170px,24%,220px);min-width:0;background:linear-gradient(180deg,#151020,#100c17);border-right:1px solid var(--hc-line);display:flex;flex-direction:column}
+.hcunion-menu .brand{padding:25px 22px 22px;font-size:19px;font-weight:850;letter-spacing:.16em;text-transform:uppercase;color:#c3a5ff;text-shadow:0 0 22px #9a63ff55;border-bottom:1px solid #ffffff08}
+.hcunion-menu .nav-links{list-style:none;padding:15px 10px;margin:0;display:grid;gap:5px}
+.hcunion-menu .nav-item{display:flex;align-items:center;gap:10px;padding:12px 13px;border:1px solid transparent;border-radius:9px;cursor:pointer;color:var(--hc-muted);font-size:13px;font-weight:650;transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;outline:none}
+.hcunion-menu .nav-item:hover{color:#fff;background:#ffffff08;transform:translateX(2px)}
+.hcunion-menu .nav-item.active{color:#fff;background:linear-gradient(90deg,#8a50e52a,#8a50e50b);border-color:#9a63ff42;box-shadow:inset 2px 0 #a879ff}
+.hcunion-menu .nav-item:focus-visible,.hcunion-menu button:focus-visible,.hcunion-menu input:focus-visible,.hcunion-menu select:focus-visible,.hcunion-menu textarea:focus-visible{outline:2px solid #b58aff;outline-offset:3px}
+.hcunion-menu .content-area{flex:1;min-width:0;padding:clamp(20px,4vw,34px);overflow:auto;background:radial-gradient(ellipse at 100% 0%,#5d329018,transparent 42%),transparent;scrollbar-width:thin;scrollbar-color:#65418d #120d19}
+.hcunion-menu .mod-panel{display:none;max-width:650px;margin:0 auto}
+.hcunion-menu .mod-panel.active{display:block;animation:hcunion-panel-in .18s ease-out}
+.hcunion-menu .mod-panel h2{margin:0 0 22px;font-size:clamp(19px,2.6vw,24px);font-weight:780;letter-spacing:-.035em}
+.hcunion-menu .setting-card{padding:8px 20px;background:linear-gradient(145deg,#191322,#130f1a);border:1px solid var(--hc-line);border-radius:12px;box-shadow:0 12px 30px #0002}
+.hcunion-menu .setting-row{display:flex;justify-content:space-between;align-items:center;gap:18px;min-height:58px;padding:12px 0;border-bottom:1px solid #ffffff09;font-size:13px;color:#e9e2f4}
+.hcunion-menu .setting-row:last-child{border-bottom:0}
+.hcunion-menu .setting-row>span:first-child{min-width:0;color:#d9d0e5;font-weight:550}
+.hcunion-menu .setting-row.flex-column{flex-direction:column;align-items:stretch;gap:10px}
+.hcunion-menu .input-group{display:flex;align-items:center;gap:12px;min-width:min(55%,260px)}
+.hcunion-menu .value-display{min-width:34px;text-align:right;color:#c3a1ff;font-weight:750;font-variant-numeric:tabular-nums}
+.hcunion-menu input[type=number],.hcunion-menu select,.hcunion-menu textarea,.hcunion-menu .keybind-field{max-width:100%;background:#0f0b16;border:1px solid #382b49;color:#f4f0ff;padding:8px 10px;border-radius:7px;font:inherit;font-size:12px;transition:border-color .18s,box-shadow .18s}
+.hcunion-menu input[type=number]{width:68px}
+.hcunion-menu select{min-width:135px;cursor:pointer}
+.hcunion-menu textarea{width:100%;min-height:88px;resize:vertical;line-height:1.5}
+.hcunion-menu .keybind-field{text-align:center;cursor:pointer;width:118px;text-transform:uppercase;font-weight:750;letter-spacing:.04em;background:#21172f;border-color:#65418d}
+.hcunion-menu .keybind-field.recording{background:#7040bd;border-color:#bd9aff;animation:hcunion-pulse 1.2s infinite}
+.hcunion-menu input[type=range]{appearance:none;-webkit-appearance:none;width:clamp(95px,19vw,190px);height:6px;border-radius:99px;background:linear-gradient(90deg,#9a63ff,#513477);cursor:pointer}
+.hcunion-menu input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#eee4ff;border:3px solid #9a63ff;box-shadow:0 0 0 3px #9a63ff24}
+.hcunion-menu input[type=range]::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:#eee4ff;border:3px solid #9a63ff;box-shadow:0 0 0 3px #9a63ff24}
+.hcunion-menu .switch{position:relative;display:inline-flex;flex:0 0 42px;width:42px;height:23px}
+.hcunion-menu .switch input{position:absolute;width:1px;height:1px;opacity:0}
+.hcunion-menu .slider-round{position:absolute;inset:0;border-radius:99px;background:#352b40;border:1px solid #4a3b59;cursor:pointer;transition:background .2s,border-color .2s}
+.hcunion-menu .slider-round:before{content:"";position:absolute;width:15px;height:15px;left:3px;top:3px;border-radius:50%;background:#b4a8c1;transition:transform .2s,background .2s}
+.hcunion-menu .switch input:checked+.slider-round{background:#7745bd;border-color:#a879ff}
+.hcunion-menu .switch input:checked+.slider-round:before{transform:translateX(19px);background:white}
+.hcunion-menu .switch input:focus-visible+.slider-round{outline:2px solid #b58aff;outline-offset:3px}
+.hcunion-menu [data-tooltip]{position:relative}
+.hcunion-menu [data-tooltip]:after{content:attr(data-tooltip);position:absolute;z-index:20;left:50%;bottom:calc(100% + 10px);transform:translate(-50%,4px);width:max-content;max-width:min(260px,70vw);padding:8px 10px;border:1px solid #65418d;border-radius:7px;background:#0b0711;color:#eee5ff;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;text-align:left;box-shadow:0 8px 24px #0009;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s,transform .15s,visibility .15s}
+.hcunion-menu [data-tooltip]:hover:after,.hcunion-menu [data-tooltip]:focus-visible:after,.hcunion-menu [data-tooltip]:focus-within:after{opacity:1;visibility:visible;transform:translate(-50%,0)}
+@keyframes hcunion-pulse{50%{opacity:.68}}
+@keyframes hcunion-panel-in{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){#hcunion-overlay-root{padding:8px}.hcunion-menu{width:100%;height:min(620px,94dvh);min-height:0;border-radius:12px}.hcunion-menu .sidebar{flex-basis:clamp(112px,31%,155px)}.hcunion-menu .brand{padding:18px 12px;font-size:15px;letter-spacing:.1em}.hcunion-menu .nav-links{padding:10px 6px}.hcunion-menu .nav-item{padding:10px 8px;font-size:11px;gap:6px}.hcunion-menu .content-area{padding:18px 13px}.hcunion-menu .setting-card{padding:6px 12px}.hcunion-menu .setting-row{gap:10px;font-size:12px}.hcunion-menu .input-group{min-width:0;gap:7px}.hcunion-menu select{min-width:105px;width:120px}.hcunion-menu input[type=range]{width:clamp(72px,20vw,130px)}}
+@media(max-width:390px){.hcunion-menu .sidebar{flex-basis:104px}.hcunion-menu .nav-item{font-size:10px}.hcunion-menu .setting-row{align-items:flex-start;flex-direction:column;gap:8px}.hcunion-menu .setting-row .input-group,.hcunion-menu .setting-row select,.hcunion-menu .setting-row input[type=number],.hcunion-menu .setting-row .keybind-field{align-self:flex-end}}
+@media(prefers-reduced-motion:reduce){.hcunion-menu *,.hcunion-menu *:before,.hcunion-menu *:after{animation:none!important;transition:none!important}}
