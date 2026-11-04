@@ -1,31 +1,13 @@
-# HCunion Client
+# EaglercraftX 1.8.8 WASM-GC
 
-A browser-hosted Minecraft 1.8.8 client wrapper using a WASM-GC runtime.
+A minimal browser launcher for an EaglercraftX 1.8.8 WASM-GC package.
 
-## Launch
-
-Open the GitHub Pages site and select **Singleplayer**, **Multiplayer**, or **Launch**:
+Open the GitHub Pages site to launch the client:
 
 https://andakeevamir010-cyber.github.io/HCunion/
 
-## Repository layout
+The launcher loads the EPW package from the configured external source at runtime. The package itself is not stored in this repository.
 
-- `index.html` — landing page
-- `style.css` — landing-page styles
-- `runtime/1.8.8-wasm/index.html` — game runtime wrapper
-- `runtime/1.8.8-wasm/bootstrap.js` — EPW loader/bootstrap
-- `.github/workflows/pages.yml` — GitHub Pages build and deployment
+The GitHub Pages workflow checks the launcher files and deploys the site. A successful deployment confirms hosting only; it does not verify the external package, relays, or browser compatibility.
 
-## Runtime
-
-This repository contains the client landing page and runtime wrapper. Custom mod-menu files and unfinished experimental Java mod source have been removed.
-
-The game package is loaded from the external `yummyfiles/Minecraft-Launcher` repository at runtime. This project does not bundle or modify that external package.
-
-## Verification
-
-The Pages workflow checks that required launch files exist and deploys the repository. A successful deployment confirms hosting, not that the third-party runtime, multiplayer relays, or browser compatibility have been fully tested.
-
-## Credits and licensing
-
-Before bundling or redistributing third-party runtime code or game assets, verify the source license, attribution requirements, and redistribution permissions. HCunion is a community project and is not affiliated with Mojang or Microsoft.
+Check the external package's license and redistribution terms before copying or hosting it elsewhere.
