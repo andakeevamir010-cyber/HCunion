@@ -1,28 +1,42 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10131d">
-  <title>HCunion Client — 1.8.8</title>
-  <link rel="stylesheet" href="./style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e17">
+<title>HCunion Client</title>
+<link rel="stylesheet" href="./style.css">
 </head>
-<body>
-  <div class="shell">
-    <header class="topbar">
-      <a class="brand" href="./"><span class="brand-mark">HC</span><span>HCunion <small>CLIENT</small></span></a>
-      <div class="version">MINECRAFT 1.8.8 <span>•</span> WASM-GC</div>
+<body class="client-menu">
+<main class="menu-shell">
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <section class="menu-content" aria-label="HCunion main menu">
+    <header class="menu-brand">
+      <div class="crest" aria-hidden="true"><span class="crest-moon">☾</span><span class="crest-star star-one">✦</span><span class="crest-star star-two">✧</span><span class="crest-star star-three">✦</span></div>
+      <div class="brand-name">HCUNION</div>
+      <div class="brand-subtitle">CLIENT</div>
+      <div class="version-tag">MINECRAFT 1.8.8 <span>•</span> WASM-GC</div>
     </header>
-    <main>
-      <section class="hero">
-        <div class="eyebrow">PRIVATE BUILD • 1.8.8 ONLY</div>
-        <h1>Play your way.</h1>
-        <p class="muted">HCunion Minecraft Java 1.8.8 browser client.</p>
-        <a class="primary-button" href="./runtime/1.8.8-wasm/">Launch Minecraft 1.8.8</a>
-        <div class="runtime"><span class="status-dot"></span><span>Browser runtime launch page</span></div>
-      </section>
-    </main>
-    <footer>HCunion Client • Community project • Not affiliated with Mojang or Microsoft</footer>
-  </div>
+    <nav class="main-actions" aria-label="Game modes">
+      <a class="menu-button" href="./runtime/1.8.8-wasm/" aria-label="Open singleplayer">SINGLEPLAYER</a>
+      <a class="menu-button" href="./runtime/1.8.8-wasm/" aria-label="Open multiplayer">MULTIPLAYER</a>
+    </nav>
+    <div class="menu-message" id="menuMessage" role="status" aria-live="polite">Welcome to HCunion</div>
+  </section>
+  <nav class="quick-actions" aria-label="Client options">
+    <a class="quick-action" href="./settings.html" title="Profile" aria-label="Profile"><span>♙</span><small>PROFILE</small></a>
+    <a class="quick-action" href="./settings.html" title="Cosmetics" aria-label="Cosmetics"><span>♢</span><small>COSMETICS</small></a>
+    <a class="quick-action" href="./settings.html" title="Client settings" aria-label="Client settings"><span>⚙</span><small>SETTINGS</small></a>
+    <button class="quick-action" id="languageButton" type="button" title="Language" aria-label="Change language"><span>◎</span><small>LANGUAGE</small></button>
+    <a class="quick-action" href="./runtime/1.8.8-wasm/" title="Launch game" aria-label="Launch game"><span>▶</span><small>LAUNCH</small></a>
+  </nav>
+  <footer class="menu-footer">HCunion Client <span>•</span> Community project <span>•</span> Not affiliated with Mojang or Microsoft</footer>
+</main>
+<script>
+document.getElementById("languageButton").addEventListener("click",function(){
+  const message=document.getElementById("menuMessage");
+  message.textContent="Language: English";
+});
+</script>
 </body>
 </html>
