@@ -4,7 +4,7 @@ A browser-hosted Minecraft 1.8.8 client wrapper using a WASM-GC runtime.
 
 ## Launch
 
-Open the GitHub Pages site and select **Launch Minecraft 1.8.8**:
+Open the GitHub Pages site and select **Singleplayer**, **Multiplayer**, or **Launch**:
 
 https://andakeevamir010-cyber.github.io/HCunion/
 
@@ -18,9 +18,9 @@ https://andakeevamir010-cyber.github.io/HCunion/
 
 ## Runtime
 
-The HCunion custom mod menu and its mod controls have been removed. There are no HCunion-added mod files in this repository. The runtime page now contains only the game frame and launch configuration.
+This repository contains the client landing page and runtime wrapper. Custom mod-menu files and unfinished experimental Java mod source have been removed.
 
-The game package is loaded from the external `yummyfiles/Minecraft-Launcher` repository at runtime. Features included inside that external package are not HCunion-added files.
+The game package is loaded from the external `yummyfiles/Minecraft-Launcher` repository at runtime. This project does not bundle or modify that external package.
 
 ## Verification
 
