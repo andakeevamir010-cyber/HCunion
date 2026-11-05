@@ -29,6 +29,7 @@ jobs:
           grep -q 'runtime/1.8.8-wasm/' index.html
           grep -q 'bootstrap.js' runtime/1.8.8-wasm/index.html
           grep -q 'assetsURI' runtime/1.8.8-wasm/index.html
+          for f in config clicker menu init; do test -s "runtime/1.8.8-wasm/hcunion/$f.js"; done
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
