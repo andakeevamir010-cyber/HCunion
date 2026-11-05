@@ -14,6 +14,17 @@
       });
       engine.start();
       window.HCunion.store = store;
+
+      // Mirror aim settings for the Java client (see CLIENT_PATCH.md).
+      function publishAim() {
+        try {
+          var json = JSON.stringify(store.get().aim);
+          window.HCunion.aimJson = json;
+          if (storage) storage.setItem(H.config.BRIDGE_KEY, btoa(json));
+        } catch (e) { /* bridge is best-effort */ }
+      }
+      store.subscribe(publishAim);
+      publishAim();
     } catch (err) {
       console.error("HCunion: failed to initialise mod menu (game unaffected)", err);
     }

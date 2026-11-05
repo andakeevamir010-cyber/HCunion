@@ -56,52 +56,52 @@
       return node;
     }
 
-    function toggleRow(label, key, tipText) {
+    function toggleRow(sec, label, key, tipText) {
       var row = el("div", "hcu-row");
       var b = el("button", "hcu-btn");
       b.type = "button";
-      function paint() { b.textContent = label + ": " + (store.get().clicker[key] ? "ON" : "OFF"); }
-      b.addEventListener("click", function () { var p = {}; p[key] = !store.get().clicker[key]; store.setClicker(p); });
+      function paint() { b.textContent = label + ": " + (store.get()[sec][key] ? "ON" : "OFF"); }
+      b.addEventListener("click", function () { var p = {}; p[key] = !store.get()[sec][key]; store.set(sec, p); });
       paint(); b._paint = paint;
       row.appendChild(withTip(b, tipText));
       return row;
     }
 
-    function sliderRow(label, key, tipText, unit) {
+    function sliderRow(sec, label, key, tipText, unit) {
       var row = el("div", "hcu-row");
       var l = el("label"), s = el("input");
       s.type = "range"; s.min = cfg.LIMITS[key][0]; s.max = cfg.LIMITS[key][1]; s.step = 1;
-      function paint() { var v = store.get().clicker[key]; s.value = v; l.textContent = label + ": " + v + (unit || ""); }
-      s.addEventListener("input", function () { var p = {}; p[key] = Number(s.value); store.setClicker(p); });
+      function paint() { var v = store.get()[sec][key]; s.value = v; l.textContent = label + ": " + v + (unit || ""); }
+      s.addEventListener("input", function () { var p = {}; p[key] = Number(s.value); store.set(sec, p); });
       paint(); row._paint = paint;
       row.appendChild(l); row.appendChild(s);
       withTip(row, tipText);
       return row;
     }
 
-    function selectRow(label, key, options, tipText) {
+    function selectRow(sec, label, key, options, tipText) {
       var row = el("div", "hcu-row");
       var l = el("label", null, label), s = el("select");
       options.forEach(function (o) { var op = el("option", null, o[1]); op.value = o[0]; s.appendChild(op); });
-      s.addEventListener("change", function () { var p = {}; p[key] = s.value; store.setClicker(p); });
-      row._paint = function () { s.value = store.get().clicker[key]; };
+      s.addEventListener("change", function () { var p = {}; p[key] = s.value; store.set(sec, p); });
+      row._paint = function () { s.value = store.get()[sec][key]; };
       row._paint();
       row.appendChild(l); row.appendChild(s);
       withTip(row, tipText);
       return row;
     }
 
-    function keybindRow(label, key, tipText) {
+    function keybindRow(sec, label, key, tipText) {
       var row = el("div", "hcu-row");
       var b = el("button", "hcu-btn"); b.type = "button";
-      function paint() { b.textContent = label + ": [" + (rebinding ? "press a key..." : keyLabel(store.get().clicker[key])) + "]"; }
+      function paint() { b.textContent = label + ": [" + (rebinding ? "press a key..." : keyLabel(store.get()[sec][key])) + "]"; }
       b.addEventListener("click", function () {
         rebinding = true; paint();
         function onKey(e) {
           e.preventDefault(); e.stopPropagation();
           rebinding = false;
           win.removeEventListener("keydown", onKey, true);
-          if (e.code !== "Escape" && e.code !== "ShiftRight") { var p = {}; p[key] = e.code; store.setClicker(p); }
+          if (e.code !== "Escape" && e.code !== "ShiftRight") { var p = {}; p[key] = e.code; store.set(sec, p); }
           paint();
         }
         win.addEventListener("keydown", onKey, true);
@@ -119,7 +119,7 @@
       panel.appendChild(el("h2", "hcu-title", "HCunion Mod Menu"));
 
       var tabs = el("div", "hcu-tabs");
-      [["clicker", "Auto Clicker", "Click timing settings."], ["aim", "Aim Assist", "Status of the aim assist module."]].forEach(function (t) {
+      [["clicker", "Auto Clicker", "Click timing settings."], ["aim", "Aim Assist", "Aim assist settings and lock-on."]].forEach(function (t) {
         var b = el("button", "hcu-btn" + (tab === t[0] ? " hcu-active" : ""), t[1]); b.type = "button";
         b.addEventListener("click", function () { tab = t[0]; build(); });
         tabs.appendChild(withTip(b, t[2]));
@@ -127,17 +127,30 @@
       panel.appendChild(tabs);
 
       if (tab === "clicker") {
-        add(panel, toggleRow("Auto Clicker", "enabled", "Master switch. While ON, holding the mouse button repeats clicks at the CPS below."));
-        add(panel, keybindRow("Toggle key", "toggleKey", "Click, then press a key to rebind the on/off hotkey. Esc cancels."));
-        add(panel, sliderRow("Min CPS", "minCps", "Lowest clicks per second. Cannot exceed Max CPS.", ""));
-        add(panel, sliderRow("Max CPS", "maxCps", "Highest clicks per second. Cannot go below Min CPS.", ""));
-        add(panel, sliderRow("Randomization", "randomization", "0 = constant CPS at the midpoint of min and max. 100 = timing varies across the full min to max range.", "%"));
-        add(panel, selectRow("Timing distribution", "distribution", [["uniform", "Uniform"], ["smooth", "Smooth (clustered near midpoint)"]], "Uniform picks any CPS in range equally. Smooth favors values near the midpoint. Only matters when Randomization is above 0."));
-        add(panel, toggleRow("Left click", "left", "Repeat left clicks while you hold the left mouse button."));
-        add(panel, toggleRow("Right click", "right", "Repeat right clicks while you hold the right mouse button."));
+        add(panel, toggleRow("clicker", "Auto Clicker", "enabled", "Master switch. While ON, holding the mouse button repeats clicks at the CPS below."));
+        add(panel, keybindRow("clicker", "Toggle key", "toggleKey", "Click, then press a key to rebind the on/off hotkey. Esc cancels."));
+        add(panel, sliderRow("clicker", "Min CPS", "minCps", "Lowest clicks per second. Cannot exceed Max CPS.", ""));
+        add(panel, sliderRow("clicker", "Max CPS", "maxCps", "Highest clicks per second. Cannot go below Min CPS.", ""));
+        add(panel, sliderRow("clicker", "Randomization", "randomization", "0 = constant CPS at the midpoint of min and max. 100 = timing varies across the full min to max range.", "%"));
+        add(panel, selectRow("clicker", "Timing distribution", "distribution", [["uniform", "Uniform"], ["smooth", "Smooth (clustered near midpoint)"]], "Uniform picks any CPS in range equally. Smooth favors values near the midpoint. Only matters when Randomization is above 0."));
+        add(panel, toggleRow("clicker", "Left click", "left", "Repeat left clicks while you hold the left mouse button."));
+        add(panel, toggleRow("clicker", "Right click", "right", "Repeat right clicks while you hold the right mouse button."));
         panel.appendChild(el("p", "hcu-note", "Works only while you hold the button. It cannot see targets or held items."));
       } else {
-        panel.appendChild(el("p", "hcu-note", "Not available. The EaglercraftX WASM-GC package does not expose player, entity or camera data to the page, so aim assist and target lock-on cannot be implemented from this launcher. They need changes to the client's Java source and a rebuilt package."));
+        add(panel, toggleRow("aim", "Aim Assist", "enabled", "Master switch. Needs the HCunion client build; see CLIENT_PATCH.md."));
+        add(panel, keybindRow("aim", "Lock key", "lockKey", "Look at a player and press this key to lock them. Press it again anywhere to release. Esc cancels rebinding."));
+        add(panel, sliderRow("aim", "Targeting range", "range", "Maximum distance in blocks at which a target is assisted or can be locked.", " blocks"));
+        add(panel, sliderRow("aim", "Field of view", "fov", "Only assist targets within this many degrees of your crosshair (full angle).", "\u00b0"));
+        add(panel, sliderRow("aim", "Sensitivity", "sensitivity", "How fast the assist pulls your aim. Low is subtle, high is snappy.", ""));
+        add(panel, sliderRow("aim", "Vertical strength", "verticalStrength", "Strength of up/down correction relative to left/right. 0 = horizontal only.", "%"));
+        add(panel, selectRow("aim", "Target selection", "targetMode", [["crosshair", "Closest to crosshair"], ["nearest", "Nearest"], ["health", "Lowest health"]], "How the assist picks a target when none is locked. A locked target is never swapped out."));
+        add(panel, selectRow("aim", "Aim point", "aimPoint", [["chest", "Chest"], ["head", "Head"]], "Which part of the target to aim at."));
+        add(panel, toggleRow("aim", "Only while attacking", "onlyWhileAttacking", "Assist only while the left mouse button is held."));
+        add(panel, toggleRow("aim", "Require line of sight", "requireLineOfSight", "Ignore targets you cannot see (behind blocks)."));
+        add(panel, toggleRow("aim", "Ignore invisible", "ignoreInvisible", "Skip invisible players."));
+        add(panel, toggleRow("aim", "Ignore teammates", "ignoreTeammates", "Skip players on your scoreboard team."));
+        add(panel, toggleRow("aim", "Target HUD", "showHud", "Show the selected target (name, health, distance) in the bottom-right corner."));
+        panel.appendChild(el("p", "hcu-note", "Lock-on: look at a player and press the lock key. Press it again, looking anywhere, to release."));
       }
 
       var foot = el("div", "hcu-foot");
@@ -158,6 +171,11 @@
       var span = el("span", s.enabled ? "hcu-on" : "hcu-off", s.enabled ? "ON" : "OFF");
       hud.appendChild(doc.createTextNode("AutoClicker: ")); hud.appendChild(span);
       hud.appendChild(doc.createTextNode(" " + s.minCps + "-" + s.maxCps + " CPS [" + parts + "] (" + keyLabel(s.toggleKey) + ")"));
+      var a = store.get().aim;
+      hud.appendChild(doc.createElement("br"));
+      hud.appendChild(doc.createTextNode("AimAssist: "));
+      hud.appendChild(el("span", a.enabled ? "hcu-on" : "hcu-off", a.enabled ? "ON" : "OFF"));
+      hud.appendChild(doc.createTextNode(" " + a.range + "b [" + keyLabel(a.lockKey) + " = lock]"));
       painters.forEach(function (p) { p(); });
     }
 
