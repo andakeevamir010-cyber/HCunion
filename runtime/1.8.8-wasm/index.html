@@ -8,22 +8,26 @@
 <style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Inter,system-ui,Arial,sans-serif}
 #game_frame{position:fixed;inset:0;background:#000}
-#hc-config{position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;background:rgba(15,12,24,.97);border:1px solid #7544b8;border-radius:14px;color:#f4efff;box-shadow:0 18px 70px #000b;display:none}
+#hc-config{position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(460px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;background:rgba(15,12,24,.97);border:1px solid #7544b8;border-radius:14px;color:#f4efff;box-shadow:0 18px 70px #000b;display:none}
 #hc-config.open{display:block}
 .hc-head{padding:18px 20px;border-bottom:1px solid #342544;display:flex;align-items:center;justify-content:space-between}
 .hc-title{font-size:17px;font-weight:800;letter-spacing:.5px}.hc-sub{font-size:11px;color:#a99bbd;margin-top:4px}
-#hc-close{background:#30223f;border:1px solid #63438a;color:#fff;border-radius:7px;padding:7px 11px;cursor:pointer}
-.hc-body{padding:18px 20px;display:grid;gap:16px}
+#hc-close,.hc-button{background:#30223f;border:1px solid #63438a;color:#fff;border-radius:7px;padding:7px 11px;cursor:pointer}
+.hc-body{padding:18px 20px;display:grid;gap:13px}
+.hc-section{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#b88aff;margin-top:4px}
 .hc-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px}
 .hc-row small{display:block;color:#a99bbd;font-size:11px;margin-top:3px}
-.hc-control{width:48%;accent-color:#a66aff}
-.hc-pill{font-size:10px;color:#d7baff;border:1px solid #67458b;border-radius:20px;padding:4px 8px}
+.hc-control{width:46%;accent-color:#a66aff}
+.hc-pill{font-size:10px;color:#d7baff;border:1px solid #67458b;border-radius:20px;padding:4px 8px;white-space:nowrap}
 .hc-note{font-size:11px;line-height:1.5;color:#b9adc9;background:#21192c;border-radius:8px;padding:11px}
-.hc-foot{padding:12px 20px;border-top:1px solid #342544;color:#9385a5;font-size:10px}
-#hc-crosshair-preview{position:fixed;z-index:99998;left:50%;top:50%;width:24px;height:24px;pointer-events:none;display:none;transform:translate(-50%,-50%)}
-#hc-crosshair-preview:before,#hc-crosshair-preview:after{content:"";position:absolute;background:#d8b5ff;box-shadow:0 0 3px #000}
-#hc-crosshair-preview:before{width:2px;height:24px;left:11px}
-#hc-crosshair-preview:after{height:2px;width:24px;top:11px}
+.hc-foot{padding:12px 20px;border-top:1px solid #342544;color:#9385a5;font-size:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hc-color{width:38px;height:28px;padding:2px;background:#21192c;border:1px solid #67458b;border-radius:6px}
+#hc-crosshair-preview{--hc-color:#d8b5ff;--hc-size:24px;--hc-thickness:2px;--hc-opacity:1;position:fixed;z-index:99998;left:50%;top:50%;width:var(--hc-size);height:var(--hc-size);pointer-events:none;display:none;transform:translate(-50%,-50%)}
+#hc-crosshair-preview:before,#hc-crosshair-preview:after{content:"";position:absolute;background:var(--hc-color);opacity:var(--hc-opacity);box-shadow:0 0 3px #000}
+#hc-crosshair-preview:before{width:var(--hc-thickness);height:var(--hc-size);left:calc(50% - var(--hc-thickness)/2)}
+#hc-crosshair-preview:after{height:var(--hc-thickness);width:var(--hc-size);top:calc(50% - var(--hc-thickness)/2)}
+#hc-crosshair-preview.dot:before{box-shadow:0 0 0 0 transparent}
+#hc-crosshair-preview.dot{background:radial-gradient(circle,var(--hc-color) 0 2px,transparent 2.5px);background-repeat:no-repeat;background-position:center}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
@@ -45,25 +49,53 @@ window.addEventListener("load",function(){
   if(server)window.eaglercraftXOpts.joinServer=server;
   main();
 
-  var panel=document.getElementById("hc-config"),close=document.getElementById("hc-close");
-  var preview=document.getElementById("hc-crosshair-preview");
+  var panel=document.getElementById("hc-config"),preview=document.getElementById("hc-crosshair-preview");
   var fov=document.getElementById("hc-fov"),smooth=document.getElementById("hc-smooth");
-  var cross=document.getElementById("hc-preview-toggle");
+  var cross=document.getElementById("hc-preview-toggle"),color=document.getElementById("hc-color");
+  var size=document.getElementById("hc-size"),thickness=document.getElementById("hc-thickness");
+  var opacity=document.getElementById("hc-opacity"),dot=document.getElementById("hc-dot");
+  var menuKey=loadSetting("menuKey","ShiftRight"),listening=false;
   function loadSetting(id,def){try{return localStorage.getItem("hcunion."+id)??def}catch(e){return def}}
   function saveSetting(id,value){try{localStorage.setItem("hcunion."+id,String(value))}catch(e){}}
-  fov.value=loadSetting("fov","90");smooth.value=loadSetting("smooth","50");
-  cross.checked=loadSetting("preview","false")==="true";
-  function sync(){document.getElementById("hc-fov-value").textContent=fov.value+"°";document.getElementById("hc-smooth-value").textContent=smooth.value+"%";preview.style.display=cross.checked?"block":"none"}
-  fov.addEventListener("input",function(){saveSetting("fov",fov.value);sync()});
-  smooth.addEventListener("input",function(){saveSetting("smooth",smooth.value);sync()});
-  cross.addEventListener("change",function(){saveSetting("preview",cross.checked);sync()});
-  function chatFocused(){var e=document.activeElement;return !!e&&(e.tagName==="INPUT"||e.tagName==="TEXTAREA"||e.isContentEditable)}
-  function toggle(){panel.classList.toggle("open")}
-  close.addEventListener("click",function(){panel.classList.remove("open")});
-  document.addEventListener("keydown",function(e){
-    if(e.code==="ShiftRight"&&!e.repeat&&!chatFocused()){e.preventDefault();toggle()}
-    if(e.code==="Escape")panel.classList.remove("open");
+  function setValue(el,id,def){el.value=loadSetting(id,def)}
+  setValue(fov,"fov","90");setValue(smooth,"smooth","50");setValue(color,"color","#d8b5ff");
+  setValue(size,"size","24");setValue(thickness,"thickness","2");setValue(opacity,"opacity","100");
+  cross.checked=loadSetting("preview","false")==="true";dot.checked=loadSetting("dot","false")==="true";
+  var keyButton=document.getElementById("hc-keybind");
+  function sync(){
+    document.getElementById("hc-fov-value").textContent=fov.value+"°";
+    document.getElementById("hc-smooth-value").textContent=smooth.value+"%";
+    document.getElementById("hc-size-value").textContent=size.value+"px";
+    document.getElementById("hc-thickness-value").textContent=thickness.value+"px";
+    document.getElementById("hc-opacity-value").textContent=opacity.value+"%";
+    preview.style.display=cross.checked?"block":"none";
+    preview.style.setProperty("--hc-color",color.value);
+    preview.style.setProperty("--hc-size",size.value+"px");
+    preview.style.setProperty("--hc-thickness",thickness.value+"px");
+    preview.style.setProperty("--hc-opacity",String(Number(opacity.value)/100));
+    preview.classList.toggle("dot",dot.checked);
+    keyButton.textContent=listening?"Press a key...":(menuKey==="ShiftRight"?"Right Shift":menuKey.replace("Key","").replace("Digit",""));
+  }
+  [[fov,"fov"],[smooth,"smooth"],[size,"size"],[thickness,"thickness"],[opacity,"opacity"]].forEach(function(pair){
+    pair[0].addEventListener("input",function(){saveSetting(pair[1],pair[0].value);sync()});
   });
+  color.addEventListener("input",function(){saveSetting("color",color.value);sync()});
+  cross.addEventListener("change",function(){saveSetting("preview",cross.checked);sync()});
+  dot.addEventListener("change",function(){saveSetting("dot",dot.checked);sync()});
+  keyButton.addEventListener("click",function(){listening=true;sync()});
+  function chatFocused(){var e=document.activeElement;return !!e&&(e.tagName==="INPUT"||e.tagName==="TEXTAREA"||e.isContentEditable)}
+  function closePanel(){panel.classList.remove("open")}
+  function toggle(){panel.classList.toggle("open")}
+  document.getElementById("hc-close").addEventListener("click",closePanel);
+  document.getElementById("hc-reset").addEventListener("click",function(){
+    ["fov","smooth","preview","color","size","thickness","opacity","dot","menuKey"].forEach(function(k){try{localStorage.removeItem("hcunion."+k)}catch(e){}});
+    fov.value=90;smooth.value=50;cross.checked=false;color.value="#d8b5ff";size.value=24;thickness.value=2;opacity.value=100;dot.checked=false;menuKey="ShiftRight";listening=false;sync();
+  });
+  document.addEventListener("keydown",function(e){
+    if(listening){e.preventDefault();e.stopPropagation();menuKey=e.code;saveSetting("menuKey",menuKey);listening=false;sync();return;}
+    if(e.code===menuKey&&!e.repeat&&!chatFocused()){e.preventDefault();toggle()}
+    if(e.code==="Escape")closePanel();
+  },true);
   sync();
 });
 </script>
@@ -71,17 +103,28 @@ window.addEventListener("load",function(){
 <body>
 <div id="game_frame"></div>
 <div id="hc-crosshair-preview" aria-hidden="true"></div>
-<section id="hc-config" aria-label="HCunion test configuration">
-  <header class="hc-head"><div><div class="hc-title">HCunion <span style="color:#b77cff">/ AIM CONFIG</span></div><div class="hc-sub">Right Shift · test settings</div></div><button id="hc-close" type="button">Close</button></header>
+<section id="hc-config" aria-label="HCunion configuration">
+  <header class="hc-head"><div><div class="hc-title">HCunion <span style="color:#b77cff">/ AIM CONFIG</span></div><div class="hc-sub">Config panel · saved in this browser</div></div><button id="hc-close" type="button">Close</button></header>
   <div class="hc-body">
-    <div class="hc-row"><div><strong>Field of view preview</strong><small>Saved locally for test reference</small></div><span id="hc-fov-value" class="hc-pill">90°</span></div>
-    <input id="hc-fov" class="hc-control" type="range" min="30" max="120" value="90" aria-label="Field of view preview">
-    <div class="hc-row"><div><strong>Smoothing reference</strong><small>Configuration value only</small></div><span id="hc-smooth-value" class="hc-pill">50%</span></div>
+    <div class="hc-section">REFERENCE SETTINGS</div>
+    <div class="hc-row"><div><strong>FOV reference</strong><small>Saved value only; does not change game FOV</small></div><span id="hc-fov-value" class="hc-pill">90°</span></div>
+    <input id="hc-fov" class="hc-control" type="range" min="30" max="120" value="90" aria-label="FOV reference">
+    <div class="hc-row"><div><strong>Smoothing reference</strong><small>Saved value only; no camera steering</small></div><span id="hc-smooth-value" class="hc-pill">50%</span></div>
     <input id="hc-smooth" class="hc-control" type="range" min="0" max="100" value="50" aria-label="Smoothing reference">
-    <label class="hc-row"><span><strong>Show crosshair preview</strong><small>Displays a separate overlay marker</small></span><input id="hc-preview-toggle" type="checkbox"></label>
-    <div class="hc-note"><strong>Anti-cheat test build:</strong> This panel stores configuration and displays a separate crosshair preview. It does not automatically select players, steer the in-game camera, or alter combat input.</div>
+    <div class="hc-section">MENU & CROSSHAIR DISPLAY</div>
+    <div class="hc-row"><span><strong>Menu keybind</strong><small>Choose the key that opens this panel</small></span><button id="hc-keybind" class="hc-button" type="button">Right Shift</button></div>
+    <label class="hc-row"><span><strong>Show crosshair preview</strong><small>Separate on-screen overlay only</small></span><input id="hc-preview-toggle" type="checkbox"></label>
+    <div class="hc-row"><span><strong>Preview color</strong><small>Overlay color</small></span><input id="hc-color" class="hc-color" type="color" value="#d8b5ff"></div>
+    <div class="hc-row"><span><strong>Preview size</strong></span><span id="hc-size-value" class="hc-pill">24px</span></div>
+    <input id="hc-size" class="hc-control" type="range" min="8" max="48" value="24" aria-label="Crosshair preview size">
+    <div class="hc-row"><span><strong>Preview thickness</strong></span><span id="hc-thickness-value" class="hc-pill">2px</span></div>
+    <input id="hc-thickness" class="hc-control" type="range" min="1" max="6" value="2" aria-label="Crosshair preview thickness">
+    <div class="hc-row"><span><strong>Preview opacity</strong></span><span id="hc-opacity-value" class="hc-pill">100%</span></div>
+    <input id="hc-opacity" class="hc-control" type="range" min="20" max="100" value="100" aria-label="Crosshair preview opacity">
+    <label class="hc-row"><span><strong>Center dot</strong><small>Add a dot to the preview</small></span><input id="hc-dot" type="checkbox"></label>
+    <div class="hc-note"><strong>Important:</strong> These are configuration and visual-preview options only. They do not detect players, target anyone, or move the Minecraft crosshair or camera.</div>
   </div>
-  <footer class="hc-foot">HCunion · Settings are saved in this browser</footer>
+  <footer class="hc-foot"><span>HCunion · Local settings</span><button id="hc-reset" class="hc-button" type="button">Reset defaults</button></footer>
 </section>
 </body>
 </html>
