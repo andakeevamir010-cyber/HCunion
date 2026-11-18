@@ -4,10 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#000000">
-<title>EaglercraftX 1.8.8 WASM-GC</title>
+<title>HCunion | EaglercraftX 1.8.8</title>
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Inter,system-ui,Arial,sans-serif}
 #game_frame{position:fixed;inset:0;background:#000}
+#hc-config{position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;background:rgba(15,12,24,.97);border:1px solid #7544b8;border-radius:14px;color:#f4efff;box-shadow:0 18px 70px #000b;display:none}
+#hc-config.open{display:block}
+.hc-head{padding:18px 20px;border-bottom:1px solid #342544;display:flex;align-items:center;justify-content:space-between}
+.hc-title{font-size:17px;font-weight:800;letter-spacing:.5px}.hc-sub{font-size:11px;color:#a99bbd;margin-top:4px}
+#hc-close{background:#30223f;border:1px solid #63438a;color:#fff;border-radius:7px;padding:7px 11px;cursor:pointer}
+.hc-body{padding:18px 20px;display:grid;gap:16px}
+.hc-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px}
+.hc-row small{display:block;color:#a99bbd;font-size:11px;margin-top:3px}
+.hc-control{width:48%;accent-color:#a66aff}
+.hc-pill{font-size:10px;color:#d7baff;border:1px solid #67458b;border-radius:20px;padding:4px 8px}
+.hc-note{font-size:11px;line-height:1.5;color:#b9adc9;background:#21192c;border-radius:8px;padding:11px}
+.hc-foot{padding:12px 20px;border-top:1px solid #342544;color:#9385a5;font-size:10px}
+#hc-crosshair-preview{position:fixed;z-index:99998;left:50%;top:50%;width:24px;height:24px;pointer-events:none;display:none;transform:translate(-50%,-50%)}
+#hc-crosshair-preview:before,#hc-crosshair-preview:after{content:"";position:absolute;background:#d8b5ff;box-shadow:0 0 3px #000}
+#hc-crosshair-preview:before{width:2px;height:24px;left:11px}
+#hc-crosshair-preview:after{height:2px;width:24px;top:11px}
 </style>
 <script src="./bootstrap.js"></script>
 <script>
@@ -16,11 +32,9 @@ window.addEventListener("load",function(){
   if(location.protocol==="file:"){document.body.textContent="Open this page through a web server.";return;}
   var relay=Math.floor(Math.random()*3);
   window.eaglercraftXOpts={
-    demoMode:false,
-    container:"game_frame",
+    demoMode:false,container:"game_frame",
     assetsURI:"https://raw.githubusercontent.com/yummyfiles/Minecraft-Launcher/main/mc/1.8.8-wasm/assets.epw",
-    worldsDB:"eaglercraftx-1.8.8-worlds",
-    servers:[],
+    worldsDB:"eaglercraftx-1.8.8-worlds",servers:[],
     relays:[
       {addr:"wss://relay.deev.is/",comment:"Relay 1",primary:relay===0},
       {addr:"wss://relay.lax1dude.net/",comment:"Relay 2",primary:relay===1},
@@ -30,10 +44,44 @@ window.addEventListener("load",function(){
   var params=new URLSearchParams(location.search),server=params.get("server");
   if(server)window.eaglercraftXOpts.joinServer=server;
   main();
+
+  var panel=document.getElementById("hc-config"),close=document.getElementById("hc-close");
+  var preview=document.getElementById("hc-crosshair-preview");
+  var fov=document.getElementById("hc-fov"),smooth=document.getElementById("hc-smooth");
+  var cross=document.getElementById("hc-preview-toggle");
+  function loadSetting(id,def){try{return localStorage.getItem("hcunion."+id)??def}catch(e){return def}}
+  function saveSetting(id,value){try{localStorage.setItem("hcunion."+id,String(value))}catch(e){}}
+  fov.value=loadSetting("fov","90");smooth.value=loadSetting("smooth","50");
+  cross.checked=loadSetting("preview","false")==="true";
+  function sync(){document.getElementById("hc-fov-value").textContent=fov.value+"°";document.getElementById("hc-smooth-value").textContent=smooth.value+"%";preview.style.display=cross.checked?"block":"none"}
+  fov.addEventListener("input",function(){saveSetting("fov",fov.value);sync()});
+  smooth.addEventListener("input",function(){saveSetting("smooth",smooth.value);sync()});
+  cross.addEventListener("change",function(){saveSetting("preview",cross.checked);sync()});
+  function chatFocused(){var e=document.activeElement;return !!e&&(e.tagName==="INPUT"||e.tagName==="TEXTAREA"||e.isContentEditable)}
+  function toggle(){panel.classList.toggle("open")}
+  close.addEventListener("click",function(){panel.classList.remove("open")});
+  document.addEventListener("keydown",function(e){
+    if(e.code==="ShiftRight"&&!e.repeat&&!chatFocused()){e.preventDefault();toggle()}
+    if(e.code==="Escape")panel.classList.remove("open");
+  });
+  sync();
 });
 </script>
 </head>
 <body>
 <div id="game_frame"></div>
+<div id="hc-crosshair-preview" aria-hidden="true"></div>
+<section id="hc-config" aria-label="HCunion test configuration">
+  <header class="hc-head"><div><div class="hc-title">HCunion <span style="color:#b77cff">/ AIM CONFIG</span></div><div class="hc-sub">Right Shift · test settings</div></div><button id="hc-close" type="button">Close</button></header>
+  <div class="hc-body">
+    <div class="hc-row"><div><strong>Field of view preview</strong><small>Saved locally for test reference</small></div><span id="hc-fov-value" class="hc-pill">90°</span></div>
+    <input id="hc-fov" class="hc-control" type="range" min="30" max="120" value="90" aria-label="Field of view preview">
+    <div class="hc-row"><div><strong>Smoothing reference</strong><small>Configuration value only</small></div><span id="hc-smooth-value" class="hc-pill">50%</span></div>
+    <input id="hc-smooth" class="hc-control" type="range" min="0" max="100" value="50" aria-label="Smoothing reference">
+    <label class="hc-row"><span><strong>Show crosshair preview</strong><small>Displays a separate overlay marker</small></span><input id="hc-preview-toggle" type="checkbox"></label>
+    <div class="hc-note"><strong>Anti-cheat test build:</strong> This panel stores configuration and displays a separate crosshair preview. It does not automatically select players, steer the in-game camera, or alter combat input.</div>
+  </div>
+  <footer class="hc-foot">HCunion · Settings are saved in this browser</footer>
+</section>
 </body>
 </html>
